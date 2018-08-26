@@ -16,12 +16,9 @@ kpData = "http://services.swpc.noaa.gov/products/noaa-planetary-k-index.json"
 url = requests.get(kpData)
 #load the json file in a text format
 kp = json.loads(url.text)
-
-for line in url:
-    maxJsonValue = maxJsonvVal + 1
-
-print(maxJsonvVal)
-
-kpValue = (kp[maxJsonvVal][1])
+#count the lines in the JSON file and return the max amount
+maxJsonvVal = sum(1 for line in kp)
+#Because its an array it starts from 0 so have to minus one (not from the KP value)
+kpValue = (kp[maxJsonvVal-1][1])
 
 print("Kp Index: " + kpValue)
