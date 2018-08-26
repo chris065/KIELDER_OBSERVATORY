@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<title>
+NASA Astronomy Picture of the Day
+</title>
+<head>
+<style>
+
+</style>
+</head>
+
+<body>
+<div>
+<b> NASA Astronomy Picture of the Day -
+<script language = "javascript">
+	var today = new Date();
+	var dd = today.getDate();
+	var mm = today.getMonth()+1; //January is 0!
+	var yyyy = today.getFullYear();
+	if(dd<10) {
+		dd='0'+dd
+	}
+	if(mm<10) {
+		mm='0'+mm
+	}
+	today = dd+'/'+mm+'/'+yyyy;
+	document.write(today);
+</script>
+</b>
+</div>
+
+<div class = "apodPosition">
+	<img style = "max-height: 650px; max-width: 1840px;" src = "NASA_APOD.jpg">
+	<div class = "key">Mars Opposition</div>
+	<div class = "caption">Look opposite the Sun in the sky tonight and you'll see Mars at its brightest. Also within days of its closest approach Mars rises at sunset, near its brightest and best for telescopic observers too, except for the dust storm still blanketing the Red Planet. These two Hubble Space Telescope images compare Mars' appearance near its 2016 and 2018 oppositions. In 2016 the martian atmosphere was clear. Captured just days ago, the 2018 image shows almost the same face of Mars. Surface features obscured by dust, the planet's cloud enshrouded south pole is tilted more toward the Sun. Increased heat in the southern hemisphere spring and summer likely triggers planet wide dust storms. Of course, if you look opposite the Sun in the sky tonight, you'll also see a Full Moon near Mars. Skygazers NOT located in North America could see the Red Planet near a Red Moon during a Total Lunar Eclipse.</div>
+</div>
+
+<div class = "credits">Image Credit: NASA</div>
+
+</body>
+</html>

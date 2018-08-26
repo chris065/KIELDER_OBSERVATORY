@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<title>
+NASA Astronomy Picture of the Day
+</title>
+<head>
+<style>
+body {
+	background-color: #000000;
+}
+
+b {
+	color: #FFFFFF;
+	font-size: 60px;
+	font-weight: bold;
+	font-family: Calibri;
+	position: absolute;
+	left: 40px;
+	top: 40px;
+}
+
+div.apodPosition {
+	position: absolute;
+	top: 140px;
+	text-align: center;
+}
+
+div.key {
+	color: #78BE20;
+	text-align: center;
+	font-size: 40px;
+	font-weight: bold;
+	font-family: Calibri;
+	padding: 10px;
+}
+
+div.caption {
+	color: #FFFFFF;
+	text-align: center;
+	font-family: Calibri;
+	margin-left: 40px;
+	margin-right: 40px;
+}
+
+div.credits {
+	position: relative;
+	top: 990px;
+	left: center;
+	color: #FFFFFF;
+	text-align: center;
+	font-size: 20px;
+	font-weight: bold;
+	font-family: Calibri;
+}
+
+</style>
+</head>
+
+<body>
+<div>
+<b> NASA Astronomy Picture of the Day -
+<script language = "javascript">
+	var today = new Date();
+	var dd = today.getDate();
+	var mm = today.getMonth()+1; //January is 0!
+	var yyyy = today.getFullYear();
+	if(dd<10) {
+		dd='0'+dd
+	}
+	if(mm<10) {
+		mm='0'+mm
+	}
+	today = dd+'/'+mm+'/'+yyyy;
+	document.write(today);
+</script>
+</b>
+</div>
+
+<div class = "apodPosition">
+	<img style = "max-height: 650px; max-width: 1840px;" src = "NASA_APOD.jpg">
+	<div class = "key">Central Lunar Eclipse</div>
+	<div class = "caption">Reddened by scattered sunlight, the Moon in the center is passing through the center of Earth's dark umbral shadow in this July 27 lunar eclipse sequence. Left to right the three images are from the start, maximum, and end to 103 minutes of totality from the longest lunar eclipse of the 21st century. The longest path the Moon can follow through Earth's shadow does cross the shadow's center, that's what makes such central lunar eclipses long ones. But July 27 was also the date of lunar apogee, and at the most distant part of its elliptical orbit the Moon moves slowest. For the previous lunar eclipse, last January 31, the Moon was near its orbital perigee. Passing just south of the Earth shadow central axis,  totality lasted only 76 minutes. Coming up on January 21, 2019, a third consecutive total lunar eclipse will also be off center and find the Moon near perigee. Then totality will be a mere 62 minutes long.</div>
+</div>
+
+<div class = "credits">Image Credit: ony Ayiomamitis</div>
+
+</body>
+</html>

@@ -1,0 +1,106 @@
+body {
+	background-color: #000000;
+}
+
+b {
+	color: #FFFFFF;
+	font-size: 60px;
+	font-weight: bold;
+	font-family: Calibri;
+	position: absolute;
+	left: 40px;
+	top: 40px;
+}
+
+div.moonPos {
+	position: absolute;
+	top: 140px;
+	left: 40px;
+}
+
+div.moonPhase {
+	position: absolute;
+	top: 140px;
+	left: 40px;
+}
+
+table.moonTable {
+	position: absolute;
+	top: 140px;
+	right: 40px;
+	border: 1px solid #FFFFFF;
+	border-collapse: collapse;
+	width: 1048px;
+	height: 748px;
+}
+
+th {
+	color: #FFFFFF;
+	background-color: #78BE20;
+	padding: 10px;
+	font-size: 40px;
+	text-align: center;
+	font-weight: bold;
+	font-family: Calibri;
+	border: 1px solid #FFFFFF;
+	border-collapse: collapse;
+}
+
+td#td01 {
+	color: #FFFFFF;
+	padding: 10px;
+	background-color: #777777;
+	font-size: 40px;
+	text-align: left;
+	font-family: Calibri;
+	border: 1px solid #FFFFFF;
+	border-collapse: collapse;
+}
+
+td#td02 {
+	color: #000000;
+	padding: 10px;
+	background-color: #FFFFFF;
+	font-size: 40px;
+	text-align: left;
+	font-family: Calibri;
+	border: 1px solid #777777;
+	border-collapse: collapse;
+}
+
+td#td03 {
+	color: #000000;
+	padding: 10px;
+	background-color: #FFFFFF;
+	font-size: 40px;
+	text-align: center;
+	font-family: Calibri;
+	border: 1px solid #777777;
+	border-collapse: collapse;
+}
+
+div.kielderLogo {
+	position: absolute;
+	top: 890px;
+	right: 40px;
+}
+
+div.key {
+	color: #78BE20;
+	text-align: center;
+	font-size: 40px;
+	font-weight: bold;
+	font-family: Calibri;
+	padding: 10px;
+}
+
+div.credits {
+	position: relative;
+	top: 990px;
+	left: center;
+	color: #FFFFFF;
+	text-align: center;
+	font-size: 20px;
+	font-weight: bold;
+	font-family: Calibri;
+}

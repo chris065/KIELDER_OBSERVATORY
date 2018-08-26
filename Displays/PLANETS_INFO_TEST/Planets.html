@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<title>
+The Solar System Now
+</title>
+<head>
+<style>
+body {
+	background-color: #000000;
+}
+
+b {
+	color: #FFFFFF;
+	font-size: 60px;
+	font-weight: bold;
+	font-family: Calibri;
+	position: absolute;
+	left: 40px;
+	top: 40px;
+}
+
+div.solarSystem {
+	position: absolute;
+	top: 140px;
+	left: 40px;
+}
+
+table.solarSystemTable {
+	position: absolute;
+	top: 140px;
+	right: 40px;
+	width: 1048px;
+	height: 748px;
+	border: 1px solid #FFFFFF;
+	border-collapse: collapse;
+}
+
+th {
+	color: #FFFFFF;
+	background-color: #78BE20;
+	padding: 10px;
+	font-size: 40px;
+	text-align: center;
+	font-weight: bold;
+	font-family: Calibri;
+	border: 1px solid #FFFFFF;
+	border-collapse: collapse;
+}
+
+td#td01 {
+	color: #FFFFFF;
+	padding: 10px;
+	background-color: #777777;
+	font-size: 40px;
+	text-align: left;
+	font-family: Calibri;
+	border: 1px solid #FFFFFF;
+	border-collapse: collapse;
+}
+
+td#td02 {
+	color: #000000;
+	padding: 10px;
+	background-color: #FFFFFF;
+	font-size: 40px;
+	text-align: left;
+	font-family: Calibri;
+	border: 1px solid #777777;
+	border-collapse: collapse;
+}
+
+div.kielderLogo {
+	position: absolute;
+	top: 890px;
+	right: 40px;
+}
+
+div.key {
+	color: #78BE20;
+	text-align: center;
+	font-size: 40px;
+	font-weight: bold;
+	font-family: Calibri;
+	padding: 10px;
+}
+
+div.credits {
+	position: relative;
+	top: 990px;
+	left: center;
+	color: #FFFFFF;
+	text-align: center;
+	font-size: 20px;
+	font-weight: bold;
+	font-family: Calibri;
+}
+
+</style>
+</head>
+
+<body>
+
+    <script>
+        setTimeout(function()
+        {
+            location.reload();
+        }, 6*60000);
+    </script>
+
+<div>
+<b> The Solar System Now
+</b>
+</div>
+
+<div class = "solarSystem">
+	<img src = "IMG/Planets_Position.png">
+	<div class = "key">Current Position of Planets</div>
+</div>
+
+<div class = "credits">Credit: www.heavens-above.com</div>
+
+<table class = "solarSystemTable">
+	<tr>
+		<th>Planet<br></th>
+		<th>Distance from<br>Sun (miles)</th>
+		<th>Distance from<br>Earth (miles)</th>
+		<th>Speed<br>(mph)</th>
+	</tr>
+	<tr>
+		<td id="td01">Mercury</td>
+		<td id="td01"><i>40,900,555</i></td>
+		<td id="td01"><i>55,773,484</i></td>
+		<td id="td01"><i>93,347</i></td>
+	</tr>
+	<tr>
+		<td id="td02">Venus</td>
+		<td id="td02"><i>67,857,739</i></td>
+		<td id="td02"><i>74,364,646</i></td>
+		<td id="td02"><i>78,024</i></td>
+	</tr>
+	<tr>
+		<td id="td01">Earth</td>
+		<td id="td01"><i>93,885,365</i></td>
+		<td id="td01"><i>-</i></td>
+		<td id="td01"><i>65,654</i></td>
+	</tr>
+	<tr>
+		<td id="td02">Mars</td>
+		<td id="td02"><i>130,138,130</i></td>
+		<td id="td02"><i>36,252,765</i></td>
+		<td id="td02"><i>58,742</i></td>
+	</tr>
+	<tr>
+		<td id="td01">Jupiter</td>
+		<td id="td01"><i>501,031,800</i></td>
+		<td id="td01"><i>487,088,429</i></td>
+		<td id="td01"><i>28,163</i></td>
+	</tr>
+	<tr>
+		<td id="td02">Saturn</td>
+		<td id="td02"><i>935,135,418</i></td>
+		<td id="td02"><i>858,911,657</i></td>
+		<td id="td02"><i>20,446</i></td>
+	</tr>
+	<tr>
+		<td id="td01">Uranus</td>
+		<td id="td01"><i>1,847,961,443</i></td>
+		<td id="td01"><i>1,831,229,398</i></td>
+		<td id="td01"><i>14,674</i></td>
+	</tr>
+	<tr>
+		<td id="td02">Neptune</td>
+		<td id="td02"><i>2,783,096,862</i></td>
+		<td id="td02"><i>2,705,013,984</i></td>
+		<td id="td02"><i>12,214</i></td>
+	</tr>
+	<tr>
+		<td id="td01">(Pluto)</td>
+		<td id="td01"><i>3,124,244,673</i></td>
+		<td id="td01"><i>3,036,866,215</i></td>
+		<td id="td01"><i>12,326</i></td>
+	</tr>
+</table>
+
+<div class = "kielderLogo">
+	<img src = "IMG/Kielder_Logo.png">
+</div>
+
+</body>
+</html>

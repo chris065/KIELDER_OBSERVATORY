@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<title>
+The Kielder Night Sky Now
+</title>
+<link type="text/css" rel="stylesheet" href="Night_Sky_Style_Dark.css">
+<head>
+<style>
+
+</style>
+</head>
+
+<body>
+
+<script>
+    setTimeout(function()
+    {
+        location.reload();
+    }, 6*60000);
+</script>
+
+<div>
+<b> The Night Sky Now -
+<script language = "javascript">
+	var today = new Date();
+	var dd = today.getDate();
+	var mm = today.getMonth()+1; //January is 0!
+	var yyyy = today.getFullYear();
+	if(dd<10) {
+		dd='0'+dd
+	}
+	if(mm<10) {
+		mm='0'+mm
+	}
+	today = dd+'/'+mm+'/'+yyyy;
+	document.write(today);
+</script>
+</b>
+</div>
+
+<div class = "nightSkyNow">
+	<img src = "IMG/Night_Sky_Now.png">
+	<div class = "key">Night Sky (14:16:59)</div>
+</div>
+
+<div class="nightSkyNext">
+	<img src = "IMG/Night_Sky_Next.png">
+	<div class = "key">Night Sky + 2 Hours (16:16:59)</div>
+</div>
+
+<div class = "note"><font color = "red">*Note: The actual position of the sun is not the horoscope constellation (shown in red in parentheses) for today's date, making astrology complete nonsense!</div>
+
+<div class = "credits">Credit: www.heavens-above.com</div>
+
+<table class = "sunTable">
+	<tr>
+		<th>Observing<br></th>
+	</tr>
+	<tr>
+		<td id="td01">Solar Noon</td>
+	</tr>
+	<tr>
+		<td id="td02"><i>12:16:57 (GMT)</i></td>
+	</tr>
+	<tr>
+		<td id="td01">Sunset</td>
+	</tr>
+	<tr>
+		<td id="td02"><i>20:23:34 (GMT)</i></td>
+	</tr>
+	<tr>
+		<td id="td01">Civil Twilight</td>
+	</tr>
+	<tr>
+		<td id="td02"><i>21:12:00 (GMT)</i></td>
+	</tr>
+	<tr>
+		<td id="td01">Nautical Twilight</td>
+	</tr>
+	<tr>
+		<td id="td02"><i>22:25:02 (GMT)</i></td>
+	</tr>
+	<tr>
+		<td id="td01">Astronomy Twilight</td>
+	</tr>
+	<tr>
+		<td id="td02"><i>N/A</i></td>
+	</tr>
+	<tr>
+		<td id="td01">Zodiac Constellation</td>
+	</tr>
+	<tr>
+		<td id="td02"><i>Cancer<font color = "red"> (Leo)*</i></td>
+	</tr>
+</table>
+
+<div class = "kielderLogo">
+	<img src = "IMG/Kielder_Logo.png">
+</div>
+
+</body>
+</html>
