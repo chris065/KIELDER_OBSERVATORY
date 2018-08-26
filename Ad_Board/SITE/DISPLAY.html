@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <title>AD DISPLAY - KIELDER OBSERVATORY</title>
+      <link type="text/css" rel="stylesheet" href="CSS/displayStyle.css"/>
+  </head>
+
+  <body>
+      <p style="text-align: center;"><img class="logoIMG" src="IMG/logoNew.png"></p>
+
+      <!--Start of code for automatic slide show
+          The slide show will change the image every 3 seconds
+          The slide show will be used to show light polution-->
+
+          <div class="slideShowContainer">
+            <div class="slides fade">
+              <img src="IMG/LP_IMAGE.png" style="width: 100%;">
+              <div class="text">Image taken in a light polluted enviroment</div>
+            </div>
+
+            <div class="slides fade">
+              <img src="IMG/LPF_IMAGE.png" style="width: 100%;">
+              <div class="text">Image taken in a light pollution free enviroment</div>
+            </div>
+
+          </div>
+
+          <script>
+          var slideIndex = 0;
+          showSlides();
+
+          function showSlides()
+          {
+            var i;
+            var slides = document.getElementsByClassName("slides");
+            for (i = 0; i < slides.length; i++)
+            {
+              slides[i].style.display = "none";
+            }
+            slideIndex++;
+            if (slideIndex > slides.length)
+            {
+              slideIndex = 1
+            }
+            slides[slideIndex-1].style.display = "block";
+            setTimeout(showSlides, 3000);
+          }
+          </script>
+
+      <!--End of Code for automatic slide show-->
+
+      <div class="date">
+        <script>
+            var suffix = "";
+            var nextSuffix = "";
+
+            var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = months[today.getMonth()];
+            var year = today.getFullYear();
+
+            var nextDay = (dd+1);
+
+            if(dd<10)
+            {
+                dd = '0'+dd
+            }
+            if(nextDay<10)
+            {
+                nextDay = '0'+dd
+            }
+
+            if(dd == 1 || dd == 21 || dd == 31)
+            {
+                suffix = "st";
+            }
+            if(dd == 2 || dd == 22)
+            {
+                suffix = "nd"
+            }
+            if(dd == 3 || dd == 23)
+            {
+                suffix = "rd"
+            }
+            else
+            {
+                suffix = "th"
+            }
+
+            if(nextDay == 1 || nextDay == 21 || nextDay == 31)
+            {
+                nextSuffix = "st";
+            }
+            if(nextDay == 2 || nextDay == 22)
+            {
+                nextSuffix = "nd"
+            }
+            if(nextDay == 3 || nextDay == 23)
+            {
+                nextSuffix = "rd"
+            }
+            else
+            {
+                nextSuffix = "th"
+            }
+            tonight = 'Tonight: ' + dd +suffix+' - '+ nextDay +nextSuffix+' '+ mm + ' ' + year;
+            document.write(tonight);
+        </script>
+      </div>
+
+        <div class="astroTableDiv">
+          <table class="astroTable">
+            <tr>
+              <th>Sunset</th>
+              <th>Moonrise</th>
+              <th>Sunrise</th>
+              <th>Moonset</th>
+            </tr>
+            <tr>
+              <!--Input time for sunset-->
+              <td>20:35:49 BST</td>
+              <!--input time for moonrise-->
+              <td>15:51:49 BST</td>
+              <!--Input time for sunrise-->
+              <td>05:52:58 BST</td>
+              <!--Input time for moonset-->
+              <td>00:20:19 BST</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="eventTableDiv">
+          <table class="eventTable">
+            <tr>
+              <th>Date</th>
+              <th>Event Name</th>
+              <th>Spaces Available</th>
+            </tr>
+
+            <tr>
+              <td>DD/MM</td>
+              <td>Event Title</td>
+              <td>Spaces</td>
+            </tr>
+            <tr>
+              <td>DD/MM</td>
+              <td>Event Title</td>
+              <td>Spaces</td>
+            </tr>
+            <tr>
+              <td>DD/MM</td>
+              <td>Event Title</td>
+              <td>Spaces</td>
+            </tr>
+
+            <tr>
+              <td>DD/MM</td>
+              <td>Event Title</td>
+              <td>Spaces</td>
+            </tr>
+
+            <tr>
+              <td>DD/MM</td>
+              <td>Event Title</td>
+              <td>Spaces</td>
+            </tr>
+
+            <tr>
+              <td>DD/MM</td>
+              <td>Event Title</td>
+              <td>Spaces</td>
+            </tr>
+          </tabel>
+        </div>
+  </body>
+</html>

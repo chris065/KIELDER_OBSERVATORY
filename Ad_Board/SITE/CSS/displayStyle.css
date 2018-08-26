@@ -1,0 +1,134 @@
+*
+{
+  box-sizing: border-box;
+}
+
+body
+{
+  background-color: black;
+  color: white;
+}
+
+.logoIMG
+{
+  width: 30%;
+  margin-top: 40px;
+}
+img
+{
+  vertical-align: middle;
+}
+
+.slides
+{
+  display: none;
+}
+
+.slideShowContainer
+{
+  max-width: 100%;
+  position: relative;
+  margin: auto;
+}
+
+.text
+{
+  color: white;
+  font-size: 20px;
+  padding: 8px 12px;
+  position: absolute;
+  bottom: 8px;
+  width: 100%;
+  text-align: center;
+  font-family: Arial;
+}
+
+.active
+{
+  background-color: black;
+}
+
+.fade
+{
+  -webkit-animation-name: fade;
+  -webkit-animation-duration: 1.5s;
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
+@-webkit-keyframes fade
+{
+  from
+  {
+    opacity: .4
+  }
+  to
+  {
+    opacity: 1
+  }
+}
+
+@keyframes fade
+{
+  from
+  {
+    opacity: .4
+  }
+  to
+  {
+    opacity: 1
+  }
+}
+.date
+{
+  font-size: 30px;
+  color: white;
+  font-family: Arial;
+  margin-top: 100px;
+  width: 100%;
+  padding: 40px;
+}
+.astroTableDiv
+{
+  text-align: center;
+  margin-top: 100px;
+  width: 100%;
+  font-family: Arial;
+  padding: 40px;
+  font-size: 30px;
+}
+table.astroTable
+{
+  width: 100%;
+  margin-right: 10px;
+  border-collapse: collapse;
+}
+td, th
+{
+  border: 4px solid white;
+  border-collapse: collapse;
+}
+th
+{
+  border-top: none;
+}
+td
+{
+  border-bottom: none;
+}
+
+.eventTableDiv
+{
+  text-align: center;
+  color: white;
+  font-family: Arial;
+  width: 100%;
+  font-size: 30px;
+  margin-top: 180px;
+  padding: 40px;
+}
+table.eventTable
+{
+  width: 100%;
+  border-collapse: collapse;
+}
