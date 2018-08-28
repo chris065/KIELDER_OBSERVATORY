@@ -39,6 +39,7 @@ import sys
 darkStyleSheet = ""
 lightStyleSheet = ""
 styleSheet = ""
+apodTitle = ""
 
 kobs = e.Observer()
 kobs.lon, kobs.lat = '-2.5881', '55.2330'
@@ -83,6 +84,7 @@ apodUrl = str(astroPod.url)
 apodUrl2 = "https://api.nasa.gov/planetary/apod?api_key=" + "VSeA2cMgNPtUslwyxj1cSGztgo8ZLJhUkGyA2IZ1"
 apodUrl3 = "https://apod.nasa.gov/apod/astropix.html"
 
+testsoup = BeautifulSoup(urllib.request.urlopen(apodUrl3).read(), "html.parser")
 yturl = ""
 iframe = ""
 
