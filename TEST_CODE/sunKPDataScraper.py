@@ -3,7 +3,8 @@ import urllib.request
 import urllib
 import datetime
 import json, requests
-from PIL import Image
+#from PIL import Image
+from subprocess import run
 
 kpValue = ""
 solarWindSpeedValue = ""
@@ -34,16 +35,17 @@ maxLinesInEnlil = sum(1 for line in enlil)
 kpValue = (kp[maxJsonvVal-1][1])
 solarWindSpeedValue = (swSpeed['WindSpeed'])
 
+
 for i in range(1, maxLinesInEnlil):
     #This will loop
     imgUrl = "http://services.swpc.noaa.gov/"+enlil[i]['url']
-    enlilImg = urllib.request.urlretrieve(imgUrl, "enlil_"+str(i)+".jpg")
-    enlilImg = Image.open("enlil_"+str(i)+".jpg")
-    enlilImg.save("IMG/enlil_"+str(i)+".jpg")
+    enlilImg = urllib.request.urlretrieve(imgUrl, "IMG/enlil_"+str(i).zfill(3)+".jpg")
+#    enlilImg = Image.open("IMG/enlil_"+str(i).zfill(3)+".jpg")
+#    enlilImg.save("IMG/enlil_"+str(i).zfill(3)+".jpg")
+
+run("ffmpeg -y -r 15 -f image2 -s 960x600 -i IMG/enlil_%03d.jpg -vcodec libx264 -crf 20 -pix_fmt yuv420p anim.mp4", shell=True)
 
 
 
-
-
-print("Kp Index: " + kpValue)
-print("Wind Speed: " + solarWindSpeedValue + " kms^-1")
+#print("Kp Index: " + kpValue)
+#print("Wind Speed: " + solarWindSpeedValue + " kms^-1")
