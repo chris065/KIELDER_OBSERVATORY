@@ -81,16 +81,27 @@ apodDate = str(datetime.datetime.now())[0:10]
 astroPod = nasaApod.apod(apodDate)
 apodUrl = str(astroPod.url)
 apodUrl2 = "https://api.nasa.gov/planetary/apod?api_key=" + "VSeA2cMgNPtUslwyxj1cSGztgo8ZLJhUkGyA2IZ1"
+apodUrl3 = "https://apod.nasa.gov/apod/astropix.html"
 
-# Get image from APOD:
-apodImage = urllib.request.urlretrieve(apodUrl, "NASA_APOD.jpg")
-apodImage = Image.open("NASA_APOD.jpg")
+yturl = ""
+iframe = ""
 
-# Save APOD image:
-apodImage.save("NASA_APOD.jpg")
-
-# Get image title for NASA APOD website:
-apodTitle = str(astroPod.title)
+if (str(testsoup.iframe) != 'None'):
+    #print(testsoup.iframe)
+    if "youtube" in str(testsoup.iframe): # Youtube Video, prepare to download
+        yturl = str(testsoup.iframe).split("youtube.com/embed/")[1].split("?rel")[0]
+        run("youtube-dl -F https://youtube.com/watch?v="+yturl+" | grep mp4 | grep video | tail -n 1 > ytinfo.txt", shell=True)
+        with open("ytinfo.txt", "r") as f:
+            qual = f.read().split("mp4")[0].strip()
+        print(qual)
+        run("youtube-dl -f "+qual+" https://youtube.com/watch?v="+yturl+"", shell=True)
+        run("mv *.mp4 APODVideo.mp4", shell=True)
+    else: # Other interactive frame. Embed directly.
+        iframe = str(testsoup.iframe)
+else: # APOD is image, fetch
+    apodImage = urllib.request.urlretrieve(apodUrl, "NASA_APOD.jpg")
+    apodImage = Image.open("NASA_APOD.jpg")
+    apodImage.save("NASA_APOD.jpg")
 
 # Get explanatory text for NASA APOD website:
 apodExplanation = str(astroPod.explanation)
@@ -105,6 +116,19 @@ index = apodText.find('"')
 # Strip off following text after copywrite name:
 apodCredit = apodText[:index]
 
+# Save Data for Future Use
+ex = open("explanation.txt", "w+")
+ex.write(apodExplanation)
+ex.close()
+
+ti = open("title.txt", "w+")
+ti.write(apodTitle)
+ti.close()
+
+cr = open("credit.txt", "w+")
+cr.write(apodCredit)
+#print(apodCredit)
+cr.close()
 
 #############################################
 # Write data to HTML file:
@@ -112,6 +136,14 @@ apodCredit = apodText[:index]
 
 # Open text HTML file (as an overwrite rather than append):
 f = open('APOD.html', 'w+')
+
+# Decide how to embed content
+if yturl != "":
+    frame = '''<video src="APOD_INFO_TEST/APODVideo.mp4" height="650" preload autoplay loop> </video>'''
+elif iframe != "":
+    frame = iframe
+else:
+    frame = '''<img style = "max-height: 650px; max-width: 1840px;" src = "APOD_INFO_TEST/NASA_APOD.jpg">'''
 
 # Write HTML href text to first line of new text HTML file:
 apodHtml = '''<!DOCTYPE html>
@@ -146,7 +178,8 @@ NASA Astronomy Picture of the Day
 </div>
 
 <div class = "apodPosition">
-	<img style = "max-height: 650px; max-width: 1840px;" src = "NASA_APOD.jpg">
+    '''+frame+'''
+	<!--<img style = "max-height: 650px; max-width: 1840px;" src = "APOD_INFO_TEST/NASA_APOD.jpg">-->
 	<div class = "key">''' + apodTitle + '''</div>
 	<div class = "caption">''' + apodExplanation + '''</div>
 </div>
