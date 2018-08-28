@@ -7,6 +7,7 @@ def testValues():
     print("Actual Temp: "+ temp +"°C")
     print("Precipitation Probablity: "+ precip + "%")
     print("Observation: " + observation)
+    print("Location: "+location)
 
 
 #What the temperature feels like (Units: °C)
@@ -15,6 +16,8 @@ feelLikeTemp = ""
 temp = ""
 #percipitation probablity  (Units: %)
 precip = ""
+#Location of where the requested data is for
+location = ""
 #The condition code that will corespond to the correct description
 weatherCode = ""
 #The condition code will map to one of these values
@@ -44,5 +47,43 @@ precip = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['Pp'])
 weatherCode = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['W'])
 observation = weatherCodeDescs[int(weatherCode)]
 #print("Observation: " + observation)
+location = (weather['SiteRep']['DV']['Location']['name']).title() #.title() will change the first letter to upper case and the rest to lower
+#print("Location: "+location)
 
-#testValues()
+htmlFile = open("Weather_Display.html", "w+")
+
+htmlFile.write('''<!DOCTYPE html>
+<html>
+  <head>
+    <title>KIELDER WEATHER DISPLAY</title>
+    <link rel="stylesheet" type="text/css" href="CSS/weatherStyle.css">
+  </head>
+
+  <body>
+    <h1>Weather - '''+location+'''</h1>
+
+    <div class="weatherData">
+      <div id="feelsLikeTemp">
+        Feels like: <b>'''+feelLikeTemp+'''˚C</b>
+      </div>
+
+      <div id="temp">
+        Actual Temp: <b>'''+temp+'''°C</b>
+      </div>
+
+      <div id="precip">
+        Precipitation Probablity: <b>'''+precip+'''%</b>
+      </div>
+
+      <div id="observation">
+        Current Observation: <b>'''+observation+'''</b>
+      </div>
+    </div>
+  </body>
+</html>
+
+''')
+
+htmlFile.close()
+
+testValues()
