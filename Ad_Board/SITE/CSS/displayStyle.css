@@ -84,6 +84,15 @@ img
   font-size: 30px;
   color: white;
   font-family: Arial;
+  margin-top: 30px;
+  width: 100%;
+  padding: 40px;
+}
+.weatherData
+{
+  font-size: 30px;
+  color: white;
+  font-family: Arial;
   margin-top: 100px;
   width: 100%;
   padding: 40px;
@@ -91,7 +100,7 @@ img
 .astroTableDiv
 {
   text-align: center;
-  margin-top: 100px;
+  margin-top: 20px;
   width: 100%;
   font-family: Arial;
   padding: 40px;
@@ -124,7 +133,7 @@ td
   font-family: Arial;
   width: 100%;
   font-size: 30px;
-  margin-top: 180px;
+  margin-top: 150px;
   padding: 40px;
 }
 table.eventTable
