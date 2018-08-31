@@ -1,4 +1,114 @@
-<!DOCTYPE html>
+import ephem as e
+import datetime
+import pytz
+import json, requests
+
+#What the temperature feels like (Units: 째C)
+feelLikeTemp = ""
+#What the temperature actually is (Units: 째C)
+temp = ""
+#percipitation probablity  (Units: %)
+precip = ""
+#The condition code that will corespond to the correct description
+weatherCode = ""
+#The condition code will map to one of these values
+weatherCodeDescs = ["Clear night", "Sunny day", "Partly cloudy (night)", "Partly cloudy (day)", "Not used", "Mist", "Fog", "Cloudy", "Overcast", "Light rain shower (night)",
+                    "Light rain shower (day)", "Drizzle", "Light rain", "Heavy rain shower (night)", "Heavy rain shower (day)", "Heavy rain", "Sleet shower (night)", "Sleet shower (day)",
+                    "Sleet", "Hail shower (night)", "Hail shower (day)", "Hail", "Light snow shower (night)", "Light snow shower (day)", "Light snow", "Heavy snow shower (night)", "Heavy snow shower (day)",
+                    "Heavy snow", "Thunder shower (night)", "Thunder shower (day)", "Thunder"]
+#once the condition code has been mapped to the description it
+#will be stored in this variable
+observation = ""
+
+#making the BST timezone object
+bst = pytz.timezone('Europe/London')
+
+obsLat = '55.232302'
+obsLon = '-2.616033'
+
+#Setting the OBSERVATORY as the Observer
+obs = e.Observer()
+
+obs.lat, obs.lon = obsLat, obsLon
+obs.date = datetime.datetime.now()
+
+#Sun values
+sunrise = obs.next_rising(e.Sun())
+sunset = obs.next_setting(e.Sun())
+
+#Moon values
+moonrise = obs.next_rising(e.Moon())
+moonset = obs.next_setting(e.Moon())
+
+
+
+#dt = datetime.datetime.strptime(str(sunrise), "%Y/%m/%d %H:%M:%S")
+#print(dt.time().isoformat())
+
+#Increment all the times by +1 hour to deal with BST
+#
+#This will eventally change, but this bodge will just have
+#to do for now
+sunrise = e.Date(sunrise + e.hour)
+sunset = e.Date(sunset + e.hour)
+moonrise = e.Date(moonrise + e.hour)
+moonset = e.Date(moonset + e.hour)
+
+#print("Sunrise: " + str(sunrise))
+#print("Sunset: " + str(sunset))
+#print("Moonrise: " + str(moonrise))
+#print("Moonset: " + str(moonset))
+
+#Take out the date (Y/m/d) element of each value calculated. Leaving just the time
+sunrise = datetime.datetime.strptime(str(sunrise), "%Y/%m/%d %H:%M:%S")
+sunrise = sunrise.time().isoformat()
+
+sunset = datetime.datetime.strptime(str(sunset), "%Y/%m/%d %H:%M:%S")
+sunset = sunset.time().isoformat()
+
+moonrise = datetime.datetime.strptime(str(moonrise), "%Y/%m/%d %H:%M:%S")
+moonrise = moonrise.time().isoformat()
+
+moonset = datetime.datetime.strptime(str(moonset), "%Y/%m/%d %H:%M:%S")
+moonset = moonset.time().isoformat()
+
+#Code to pull back the weather
+def testValues():
+    #print the whole JSON array
+    #print(weather)
+    print("Feels Like: "+ feelLikeTemp +"째C")
+    print("Actual Temp: "+ temp +"째C")
+    print("Precipitation Probablity: "+ precip + "%")
+    print("Observation: " + observation)
+
+
+weatherDataUrl = "http://datapoint.metoffice.gov.uk/public/data/val/wxfcs/all/json/352090?res=3hourly&key=c5e68363-c162-4e94-8661-bc92d217577a"
+
+jWeather = requests.get(weatherDataUrl)
+
+weather = json.loads(jWeather.text)
+#print(weather)
+
+feelLikeTemp = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['F'])
+#print("Feels Like: "+ feelLikeTemp +"째C")
+temp = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['T'])
+#print("Actual Temp: "+ temp +"째C")
+precip = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['Pp'])
+#print("Precipitation Probablity: "+ precip + "%")
+weatherCode = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['W'])
+observation = weatherCodeDescs[int(weatherCode)]
+#print("Observation: " + observation)
+
+#testValues()
+
+
+htmlFile = open("../DISPLAY.html", "w+")
+
+#writing the sunrise, moonrise, sunset and the moonset data to the html file
+#overwrite the file rather than append to it
+
+htmlFile.write(
+'''<!DOCTYPE html>
 <html>
   <head>
       <title>AD DISPLAY - KIELDER OBSERVATORY</title>
@@ -106,13 +216,13 @@
           </tr>
           <tr>
             <!--Insert Feels Like Temp here-->
-            <td>15캜</td>
+            <td>'''+str(feelLikeTemp)+'''째C</td>
             <!--Insert Actual Temp here-->
-            <td>16캜</td>
+            <td>'''+str(temp)+'''째C</td>
             <!--Insert Precipertaion Probability here-->
-            <td>4%</td>
+            <td>'''+str(precip)+'''%</td>
             <!--Insert Current Observation here-->
-            <td>Cloudy</td>
+            <td>'''+str(observation)+'''</td>
           </tr>
         </table>
       </div>
@@ -127,13 +237,13 @@
             </tr>
             <tr>
               <!--Input time for sunset-->
-              <td>20:06:31 BST</td>
+              <td>'''+str(sunset)+''' BST</td>
               <!--input time for moonrise-->
-              <td>22:11:09 BST</td>
+              <td>'''+str(moonrise)+''' BST</td>
               <!--Input time for sunrise-->
-              <td>06:15:39 BST</td>
+              <td>'''+str(sunrise)+''' BST</td>
               <!--Input time for moonset-->
-              <td>12:53:05 BST</td>
+              <td>'''+str(moonset)+''' BST</td>
             </tr>
           </table>
         </div>
@@ -183,3 +293,6 @@
         </div>
   </body>
 </html>
+'''
+)
+htmlFile.close()
