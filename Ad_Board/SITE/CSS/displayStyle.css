@@ -88,15 +88,6 @@ img
   width: 100%;
   padding: 40px;
 }
-.weatherData
-{
-  font-size: 30px;
-  color: white;
-  font-family: Arial;
-  margin-top: 100px;
-  width: 100%;
-  padding: 40px;
-}
 .astroTableDiv
 {
   text-align: center;
@@ -106,7 +97,22 @@ img
   padding: 40px;
   font-size: 30px;
 }
+.weatherDataTableDiv
+{
+  text-align: center;
+  margin-top: 20px;
+  width: 100%;
+  font-family: Arial;
+  padding: 40px;
+  font-size: 30px;
+}
 table.astroTable
+{
+  width: 100%;
+  margin-right: 10px;
+  border-collapse: collapse;
+}
+table.weatherDataTable
 {
   width: 100%;
   margin-right: 10px;
