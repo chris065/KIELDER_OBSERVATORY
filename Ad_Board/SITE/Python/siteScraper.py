@@ -3,6 +3,35 @@ import datetime
 import pytz
 import json, requests
 
+date = ""
+month = ""
+nextMonth = ""
+months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+year = ""
+day = ""
+nextDay = ""
+
+date = datetime.datetime.now()
+day = date.day
+nextDay = day+1
+month = months[date.month-1] #-1 becuase it will start at 0
+year = date.year
+
+if(day < 10):
+    day = "0"+str(day)
+if(nextDay < 10):
+    nextDay = "0"+str(nextDay)
+
+if(int(nextDay) > 31):
+    nextDay = "0"+str(1)
+    nextMonth = months[date.month]
+    nextDay = str(nextDay)+"("+nextMonth+")"
+
+
+date = "Tonight: " + str(day)+" - "+str(nextDay)+" "+str(month)+" "+str(year)
+#print(date)
+
+
 #What the temperature feels like (Units: °C)
 feelLikeTemp = ""
 #What the temperature actually is (Units: °C)
@@ -160,51 +189,8 @@ htmlFile.write(
       <!--End of Code for automatic slide show-->
 
       <div class="date">
-  <script>
-      var suffix = "th";
-
-      nextMonth = "";
-
-      var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-
-      var today = new Date();
-      var dd = today.getDate();
-      var mm = months[today.getMonth()];
-      var year = today.getFullYear();
-
-      var nextDay = dd + 1;
-
-      if(nextDay > 31)
-      {
-        nextDay = 1;
-        nextMonth = "("+months[today.getMonth()+1]+")";
-      }
-
-      if(dd<10)
-      {
-          dd = '0'+dd;
-      }
-      if(nextDay < 10)
-      {
-        nextDay = '0'+nextDay;
-      }
-
-      if((dd == 1 || dd == 21 || dd == 31) || (nextDay == 1 || nextDay == 21 || nextDay == 31))
-      {
-          suffix = "st";
-      }
-      if((dd == 2 || dd == 22) || (nextDay == 2 || nextDay == 22))
-      {
-          suffix = "nd";
-      }
-      if((dd == 3 || dd == 23) || (nextDay == 3) || nextDay == 23)
-      {
-          suffix = "rd";
-      }
-      tonight = 'Tonight: ' + dd +suffix+' - '+nextDay+suffix+' '+nextMonth+' '+ mm + ' ' + year;
-      document.write(tonight);
-  </script>
-</div>
+      '''+date+'''
+      </div>
 
       <div class="weatherDataTableDiv">
         <table class="weatherDataTable">
