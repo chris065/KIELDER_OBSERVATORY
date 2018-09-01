@@ -216,11 +216,11 @@ htmlFile.write(
           </tr>
           <tr>
             <!--Insert Feels Like Temp here-->
-            <td>'''+str(feelLikeTemp)+'''°C</td>
+            <td>'''+str(feelLikeTemp)+''' &deg;C</td>
             <!--Insert Actual Temp here-->
-            <td>'''+str(temp)+'''°C</td>
+            <td>'''+str(temp)+''' &deg;C</td>
             <!--Insert Precipertaion Probability here-->
-            <td>'''+str(precip)+'''%</td>
+            <td>'''+str(precip)+'''&percnt;</td>
             <!--Insert Current Observation here-->
             <td>'''+str(observation)+'''</td>
           </tr>

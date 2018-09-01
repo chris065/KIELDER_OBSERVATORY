@@ -95,8 +95,8 @@ sunImage.save("IMG/Visible_Sun.jpg")
 magnetoUrl = "http://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_HMIB.jpg"
 
 # Get SDO magnetogram image:
-sdoImage3 = urllib.request.urlretrieve(magnetoUrl, "Magnetic_Sun.jpg")
-magnetoImage = Image.open("Magnetic_Sun.jpg")
+sdoImage3 = urllib.request.urlretrieve(magnetoUrl, "IMG/Magnetic_Sun.jpg")
+magnetoImage = Image.open("IMG/Magnetic_Sun.jpg")
 
 # Crop magnetic image from 1024x1024 to size and remove ugly timestamps:
 magneticLeft = 37
@@ -110,7 +110,7 @@ magnetoImage = magnetoImage.resize(magneticSize, Image.ANTIALIAS)
 # Save revised image:
 magnetoImage.save("IMG/Magnetic_Sun.jpg")
 
-f = open("Sun.html", "w+")
+f = open("../Screen3.html", "w+")
 
 sunHTML = '''<!DOCTYPE html>
 <html>
@@ -137,19 +137,19 @@ The Sun Now
 </div>
 
 <div class = "sunVisible">
-	<img src = "IMG/Visible_Sun.jpg">
+	<img src = "SUN_INFO_TEST/IMG/Visible_Sun.jpg">
 	<div class = "key">Visible Light:</div>
 	<div class = "caption">Intensitygram (~5700&#176C)<br>- sunspots appear darker</div>
 </div>
 
 <div class = "sunMagneto">
-	<img src = "IMG/Magnetic_Sun.jpg">
+	<img src = "SUN_INFO_TEST/IMG/Magnetic_Sun.jpg">
 	<div class = "key">Magnetogram (6173&Aring):</div>
 	<div class = "caption">Magnetic fields in the photosphere<br>- black/white showing opposite poles</div>
 </div>
 
 <div class = "sunXray">
-	<img src = "IMG/XRay_Sun.jpg">
+	<img src = "SUN_INFO_TEST/IMG/XRay_Sun.jpg">
 	<div class = "key">Soft X-Rays (94&Aring):</div>
 	<div class = "caption">Flares (~6million&#176C) in the corona<br>- hottest regions appear white</div>
 </div>
