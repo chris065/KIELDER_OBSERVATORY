@@ -14,7 +14,7 @@ if (today.year == tomorrow.year):
         datestr = today.strftime("%d %b") + " - " + tomorrow.strftime("%d %b") + " " + today.strftime("%Y")
 else: # Date is 31/12
     datestr = today.strftime("%d %b %y") + " - " + tomorrow.strftime("%d %b %y")
-print (datestr)
+#print (datestr)
 
 
 #What the temperature feels like (Units: °C)
@@ -174,7 +174,7 @@ htmlFile.write(
       <!--End of Code for automatic slide show-->
 
       <div class="date">
-      '''+datestr+'''
+      Tonight: '''+datestr+'''
       </div>
 
       <div class="weatherDataTableDiv">
