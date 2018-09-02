@@ -3,8 +3,12 @@ import datetime
 import pytz
 import json, requests
 
+# Key definition for moonrise/set table
+def takeSecond(elem):
+    return elem[1]
+
 datestr = ""
-today = datetime.date(2018,12,31)
+today = datetime.date.today()
 tomorrow = today + datetime.timedelta(days=1)
 
 if (today.year == tomorrow.year):
@@ -35,7 +39,7 @@ weatherCodeDescs = ["Clear night", "Sunny day", "Partly cloudy (night)", "Partly
 observation = ""
 
 #making the BST timezone object
-bst = pytz.timezone('Europe/London')
+gb = pytz.timezone('Europe/London')
 
 obsLat = '55.232302'
 obsLon = '-2.616033'
@@ -44,47 +48,26 @@ obsLon = '-2.616033'
 obs = e.Observer()
 
 obs.lat, obs.lon = obsLat, obsLon
-obs.date = datetime.datetime.now()
+obs.date = datetime.datetime.utcnow()
 
 #Sun values
-sunrise = obs.next_rising(e.Sun())
 sunset = obs.next_setting(e.Sun())
+# Change Time to Sunset to get Moon times and next sunrise
+obs.date = sunset
 
-#Moon values
-moonrise = obs.next_rising(e.Moon())
-moonset = obs.next_setting(e.Moon())
+sunset = sunset.datetime().replace(tzinfo=pytz.utc)
+sunrise = obs.next_rising(e.Sun()).datetime().replace(tzinfo=pytz.utc)
+moonrise = obs.next_rising(e.Moon()).datetime().replace(tzinfo=pytz.utc)
+moonset = obs.next_setting(e.Moon()).datetime().replace(tzinfo=pytz.utc)
 
+sunset = sunset.astimezone(tz=gb)
+sunrise = sunrise.astimezone(tz=gb)
+moonset = moonset.astimezone(tz=gb)
+moonrise = moonrise.astimezone(tz=gb)
 
-
-#dt = datetime.datetime.strptime(str(sunrise), "%Y/%m/%d %H:%M:%S")
-#print(dt.time().isoformat())
-
-#Increment all the times by +1 hour to deal with BST
-#
-#This will eventally change, but this bodge will just have
-#to do for now
-sunrise = e.Date(sunrise + e.hour)
-sunset = e.Date(sunset + e.hour)
-moonrise = e.Date(moonrise + e.hour)
-moonset = e.Date(moonset + e.hour)
-
-#print("Sunrise: " + str(sunrise))
-#print("Sunset: " + str(sunset))
-#print("Moonrise: " + str(moonrise))
-#print("Moonset: " + str(moonset))
-
-#Take out the date (Y/m/d) element of each value calculated. Leaving just the time
-sunrise = datetime.datetime.strptime(str(sunrise), "%Y/%m/%d %H:%M:%S")
-sunrise = sunrise.time().isoformat()
-
-sunset = datetime.datetime.strptime(str(sunset), "%Y/%m/%d %H:%M:%S")
-sunset = sunset.time().isoformat()
-
-moonrise = datetime.datetime.strptime(str(moonrise), "%Y/%m/%d %H:%M:%S")
-moonrise = moonrise.time().isoformat()
-
-moonset = datetime.datetime.strptime(str(moonset), "%Y/%m/%d %H:%M:%S")
-moonset = moonset.time().isoformat()
+riseset = [("Sunrise", sunrise),("Sunset", sunset),("Moonrise",moonrise),("Moonset",moonset)]
+riseset.sort(key=takeSecond)
+#print(riseset)
 
 #Code to pull back the weather
 def testValues():
@@ -112,7 +95,8 @@ precip = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['Pp'])
 weatherCode = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['W'])
 observation = weatherCodeDescs[int(weatherCode)]
 #print("Observation: " + observation)
-
+windspd = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['G'])
+winddir = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['D'])
 #testValues()
 
 
@@ -180,16 +164,16 @@ htmlFile.write(
       <div class="weatherDataTableDiv">
         <table class="weatherDataTable">
           <tr>
-            <th>Feels Like</th>
-            <th>Actual Temperature</th>
+            <th>Temperature (Feels Like)</th>
+            <th>Wind Speed (Dir)</th>
             <th>Precipitation Probability</th>
             <th>Current Observation</th>
           </tr>
           <tr>
             <!--Insert Feels Like Temp here-->
-            <td>'''+str(feelLikeTemp)+''' &deg;C</td>
-            <!--Insert Actual Temp here-->
-            <td>'''+str(temp)+''' &deg;C</td>
+            <td>'''+str(temp)+''' &deg;C ('''+str(feelLikeTemp)+''' &deg;C)</td>
+            <!--Insert Wind Info here-->
+            <td>'''+str(windspd)+''' mph ('''+str(winddir)+''')</td>
             <!--Insert Precipertaion Probability here-->
             <td>'''+str(precip)+'''&percnt;</td>
             <!--Insert Current Observation here-->
@@ -201,20 +185,20 @@ htmlFile.write(
         <div class="astroTableDiv">
           <table class="astroTable">
             <tr>
-              <th>Sunset</th>
-              <th>Moonrise</th>
-              <th>Sunrise</th>
-              <th>Moonset</th>
+              <th>'''+riseset[0][0]+'''</th>
+              <th>'''+riseset[1][0]+'''</th>
+              <th>'''+riseset[2][0]+'''</th>
+              <th>'''+riseset[3][0]+'''</th>
             </tr>
             <tr>
               <!--Input time for sunset-->
-              <td>'''+str(sunset)+''' BST</td>
+              <td>'''+riseset[0][1].strftime("%H:%M:%S %Z")+'''</td>
               <!--input time for moonrise-->
-              <td>'''+str(moonrise)+''' BST</td>
+              <td>'''+riseset[1][1].strftime("%H:%M:%S %Z")+'''</td>
               <!--Input time for sunrise-->
-              <td>'''+str(sunrise)+''' BST</td>
+              <td>'''+riseset[2][1].strftime("%H:%M:%S %Z")+'''</td>
               <!--Input time for moonset-->
-              <td>'''+str(moonset)+''' BST</td>
+              <td>'''+riseset[3][1].strftime("%H:%M:%S %Z")+'''</td>
             </tr>
           </table>
         </div>
