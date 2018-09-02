@@ -98,7 +98,8 @@ observation = weatherCodeDescs[int(weatherCode)]
 windspd = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['G'])
 winddir = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['D'])
 #testValues()
-
+loc = str((weather['SiteRep']['DV']['Location']['name'])).title()
+print(loc)
 
 htmlFile = open("../DISPLAY.html", "w+")
 
@@ -158,9 +159,8 @@ htmlFile.write(
       <!--End of Code for automatic slide show-->
 
       <div class="date">
-      Tonight: '''+datestr+'''
+      Weather for '''+loc+''':
       </div>
-
       <div class="weatherDataTableDiv">
         <table class="weatherDataTable">
           <tr>
@@ -182,7 +182,10 @@ htmlFile.write(
         </table>
       </div>
 
-        <div class="astroTableDiv">
+      <div class="date">
+      Tonight: '''+datestr+'''
+      </div>
+      <div class="astroTableDiv">
           <table class="astroTable">
             <tr>
               <th>'''+riseset[0][0]+'''</th>

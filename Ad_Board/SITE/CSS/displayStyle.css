@@ -87,6 +87,7 @@ img
   margin-top: 30px;
   width: 100%;
   padding: 40px;
+  padding-bottom: 0px;
 }
 .astroTableDiv
 {
@@ -94,7 +95,10 @@ img
   margin-top: 20px;
   width: 100%;
   font-family: Arial;
-  padding: 40px;
+  padding-top: 0px;
+  padding-left: 40px;
+  padding-right: 40px;
+  padding-bottom: 40px;
   font-size: 30px;
 }
 .weatherDataTableDiv
@@ -103,7 +107,10 @@ img
   margin-top: 20px;
   width: 100%;
   font-family: Arial;
-  padding: 40px;
+  padding-top: 0px;
+  padding-left: 40px;
+  padding-right: 40px;
+  padding-bottom: 40px;
   font-size: 30px;
 }
 table.astroTable
@@ -130,6 +137,7 @@ th
 td
 {
   border-bottom: none;
+  padding: 10px;
 }
 
 .eventTableDiv
