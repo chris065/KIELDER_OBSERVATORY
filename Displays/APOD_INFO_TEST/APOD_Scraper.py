@@ -35,6 +35,7 @@ import string
 # Setting environment variables and/or deleting files:
 import os
 import sys
+from subprocess import run
 
 darkStyleSheet = ""
 lightStyleSheet = ""
@@ -73,14 +74,18 @@ else:
 # Set NASA API key as environment variable:
 os.environ['NASA_API_KEY'] = 'VSeA2cMgNPtUslwyxj1cSGztgo8ZLJhUkGyA2IZ1'
 
-# Create today's date in YYYY-MM-DD format:
-apodDate = str(datetime.datetime.now())[0:10]
+apodDay = datetime.datetime.now()
+
+if (apodDay.hour < 9):
+    apodDay = apodDay - datetime.timedelta(days=1) # Pull yesterday's APOD if before 9am
+# Convert date to YYYY-MM-DD format:
+apodDate = apodDay.strftime("%Y-%m-%d")
 
 # Get image source for NASA APOD website:
 astroPod = nasaApod.apod(apodDate)
 apodUrl = str(astroPod.url)
 apodUrl2 = "https://api.nasa.gov/planetary/apod?api_key=" + "VSeA2cMgNPtUslwyxj1cSGztgo8ZLJhUkGyA2IZ1"
-apodUrl3 = "https://apod.nasa.gov/apod/astropix.html"
+apodUrl3 = "https://apod.nasa.gov/apod/ap"+apodDay.strftime('%y%m%d')+".html"
 
 testsoup = BeautifulSoup(urllib.request.urlopen(apodUrl3).read(), "html.parser")
 yturl = ""
@@ -135,7 +140,7 @@ cr.close()
 #############################################
 
 # Open text HTML file (as an overwrite rather than append):
-f = open('APOD.html', 'w+')
+f = open('../Screen1.html', 'w+')
 
 # Decide how to embed content
 if yturl != "":
@@ -159,21 +164,8 @@ NASA Astronomy Picture of the Day
 
 <body>
 <div>
-<b> NASA Astronomy Picture of the Day -
-<script language = "javascript">
-	var today = new Date();
-	var dd = today.getDate();
-	var mm = today.getMonth()+1; //January is 0!
-	var yyyy = today.getFullYear();
-	if(dd<10) {
-		dd='0'+dd
-	}
-	if(mm<10) {
-		mm='0'+mm
-	}
-	today = dd+'/'+mm+'/'+yyyy;
-	document.write(today);
-</script>
+<b> NASA Astronomy Picture of the Day - '''+apodDay.strftime("%d/%m/%Y")+'''
+
 </b>
 </div>
 
