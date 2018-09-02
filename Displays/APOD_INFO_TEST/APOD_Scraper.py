@@ -54,12 +54,10 @@ alt = int(str(sol.alt).split(':')[0])
 
 if (alt < -6):
     #read the contents of the dark style sheet for night time
-    darkStyleSheet = open("APOD_Style_Dark.css", "r").read()
-    styleSheet = darkStyleSheet
+    styleSheet = open("APOD_Style_Dark.css", "r").read()
 else:
     #read the contents of the light for day time style sheet
-    lightStyleSheet = open("APOD_Style_Light.css", "r").read()
-    styleSheet = lightStyleSheet
+    styleSheet = open("APOD_Style_Light.css", "r").read()
 
 
 #############################################

@@ -2,20 +2,7 @@ import ephem as e
 import datetime
 import pytz
 import json, requests
-
-datestr = ""
-today = datetime.date(2018,12,31)
-tomorrow = today + datetime.timedelta(days=1)
-
-if (today.year == tomorrow.year):
-    if (today.month == tomorrow.month):
-        datestr = today.strftime("%d") + " - " + tomorrow.strftime("%d") + " " + today.strftime("%B %Y")
-    else:
-        datestr = today.strftime("%d %b") + " - " + tomorrow.strftime("%d %b") + " " + today.strftime("%Y")
-else: # Date is 31/12
-    datestr = today.strftime("%d %b %y") + " - " + tomorrow.strftime("%d %b %y")
-print (datestr)
-
+from bs4 import BeautifulSoup
 
 #What the temperature feels like (Units: °C)
 feelLikeTemp = ""
@@ -112,8 +99,27 @@ precip = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['Pp'])
 weatherCode = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['W'])
 observation = weatherCodeDescs[int(weatherCode)]
 #print("Observation: " + observation)
-
 #testValues()
+
+datestr = ""
+today = datetime.date(2018,12,31)
+tomorrow = today + datetime.timedelta(days=1)
+
+if (today.year == tomorrow.year):
+    if (today.month == tomorrow.month):
+        datestr = today.strftime("%d") + " - " + tomorrow.strftime("%d") + " " + today.strftime("%B %Y")
+    else:
+        datestr = today.strftime("%d %b") + " - " + tomorrow.strftime("%d %b") + " " + today.strftime("%Y")
+else: # Date is 31/12
+    datestr = today.strftime("%d %b %y") + " - " + tomorrow.strftime("%d %b %y")
+print (datestr)
+
+
+# Visible ISS Passes from Heavens Above
+issUrl = requests.get("https://www.heavens-above.com/PassSummary.aspx?satid=25544&lat=55.2323&lng=-2.616&loc=Kielder&alt=378&tz=GMT")
+
+
+
 
 
 htmlFile = open("../DISPLAY.html", "w+")
@@ -174,8 +180,51 @@ htmlFile.write(
       <!--End of Code for automatic slide show-->
 
       <div class="date">
-      '''+datestr+'''
-      </div>
+  <script>
+      var suffix = "th";
+
+      nextMonth = "";
+
+      var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+      var today = new Date();
+      var dd = today.getDate();
+      var mm = months[today.getMonth()];
+      var year = today.getFullYear();
+
+      var nextDay = dd + 1;
+
+      if(nextDay > 31)
+      {
+        nextDay = 1;
+        nextMonth = "("+months[today.getMonth()+1]+")";
+      }
+
+      if(dd<10)
+      {
+          dd = '0'+dd;
+      }
+      if(nextDay < 10)
+      {
+        nextDay = '0'+nextDay;
+      }
+
+      if((dd == 1 || dd == 21 || dd == 31) || (nextDay == 1 || nextDay == 21 || nextDay == 31))
+      {
+          suffix = "st";
+      }
+      if((dd == 2 || dd == 22) || (nextDay == 2 || nextDay == 22))
+      {
+          suffix = "nd";
+      }
+      if((dd == 3 || dd == 23) || (nextDay == 3) || nextDay == 23)
+      {
+          suffix = "rd";
+      }
+      tonight = 'Tonight: ' + dd +suffix+' - '+nextDay+suffix+' '+nextMonth+' '+ mm + ' ' + year;
+      document.write(tonight);
+  </script>
+</div>
 
       <div class="weatherDataTableDiv">
         <table class="weatherDataTable">
