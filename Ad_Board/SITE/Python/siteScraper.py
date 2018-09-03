@@ -76,6 +76,8 @@ def testValues():
     print("Feels Like: "+ feelLikeTemp +"°C")
     print("Actual Temp: "+ temp +"°C")
     print("Precipitation Probablity: "+ precip + "%")
+    print("Wind Speed: " + windspd + " mph")
+    print("Wind Direction: " + winddir)
     print("Observation: " + observation)
 
 
