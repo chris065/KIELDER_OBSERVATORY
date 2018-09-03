@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<title>
+The Kielder Weather Now
+</title>
+<head>
+<style>
+
+body {
+	background-color: #000000;
+}
+
+b {
+	color: #FFFFFF;
+	font-size: 60px;
+	font-weight: bold;
+	font-family: Calibri;
+	position: absolute;
+	left: 40px;
+	top: 40px;
+}
+
+table.weatherTable {
+	position: absolute;
+	top: 140px;
+	right: 40px;
+	width: 1118px;
+	height: 678px;
+	border: 1px solid #FFFFFF;
+	border-collapse: collapse;
+}
+
+th {
+	color: #FFFFFF;
+	background-color: #78BE20;
+	padding: 10px;
+	font-size: 40px;
+	text-align: center;
+	font-weight: bold;
+	font-family: Calibri;
+	border: 1px solid #FFFFFF;
+	border-collapse: collapse;
+}
+
+td#td01 {
+	color: #FFFFFF;
+	padding: 10px;
+	background-color: #777777;
+	font-size: 40px;
+	text-align: left;
+	font-family: Calibri;
+	border: 1px solid #FFFFFF;
+	border-collapse: collapse;
+}
+
+td#td02 {
+	color: #000000;
+	padding: 10px;
+	background-color: #FFFFFF;
+	font-size: 40px;
+	text-align: left;
+	font-family: Calibri;
+	border: 1px solid #777777;
+	border-collapse: collapse;
+}
+
+div.satCloud {
+	position: absolute;
+	top: 140px;
+	left: 40px;
+}
+
+div.kielderLogo {
+	position: absolute;
+	top: 890px;
+	right: 40px;
+}
+
+div.key {
+	color: #78BE20;
+	text-align: center;
+	font-size: 40px;
+	font-weight: bold;
+	font-family: Calibri;
+	padding: 10px;
+}
+
+div.credits {
+	position: relative;
+	top: 990px;
+	left: center;
+	color: #FFFFFF;
+	text-align: center;
+	font-size: 20px;
+	font-weight: bold;
+	font-family: Calibri;
+}
+
+</style>
+</head>
+
+<body>
+
+<div>
+<b>The Kielder Weather Now
+</b>
+</div>
+
+<div class = "satCloud">
+	<img src = "C:\Users\Kielder Observatory\Desktop\Kielder_Displays\Weather\Sat_Weather.png">
+	<div class = "key">Live Infra-red Cloud Map</div>
+</div>
+
+<div class = "credits">Credit: EUMETSAT &#38 Open Weather Map</div>
+
+<table class = "weatherTable">
+	<tr>
+		<th>Kielder Live Weather</th>
+	</tr>
+	<tr>
+		<td id="td01">Temperature (&#176C)/(&#176F)</td>
+		<td id="td01"><i>12.08&#176C/53.75&#176F</i></td>
+	</tr>
+    	<tr>
+		<td id="td02">Humidity (%)</td>
+		<td id="td02"><i>98%</i></td>
+	</tr>
+	<tr>
+		<td id="td01">Wind Speed/Direction (mph)/(&#176)</td>
+		<td id="td01"><i>3.22mph/91.0034&#176</i></td>
+	</tr>
+	<tr>
+		<td id="td02">Cloud Cover (%)</td>
+		<td id="td02"><i>92%</i></td>
+	</tr>
+	<tr>
+		<td id="td01">Pressure (mBar)</td>
+		<td id="td01"><i>990.34mBar</i></td>
+	</tr>
+
+</table>
+
+<div class = "kielderLogo">
+	<img src = "C:\Users\Kielder Observatory\Desktop\Kielder_Displays\Weather\Kielder_Logo.png">
+</div>
+
+</body>
+</html>
