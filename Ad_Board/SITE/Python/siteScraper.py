@@ -252,7 +252,7 @@ htmlFile.write(
               <td>Event Title</td>
               <td>Spaces</td>
             </tr>
-          </tabel>
+          </table>
         </div>
   </body>
 </html>
