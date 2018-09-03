@@ -1,7 +1,11 @@
 import ephem as e
 import datetime
 import pytz
-import json, requests
+import json, requests, urllib
+#from nasa import maas
+from bs4 import BeautifulSoup
+from html_table_extractor.extractor import Extractor
+import csv
 
 # Key definition for moonrise/set table
 def takeSecond(elem):
@@ -82,9 +86,7 @@ def testValues():
 
 
 weatherDataUrl = "http://datapoint.metoffice.gov.uk/public/data/val/wxfcs/all/json/352090?res=3hourly&key=c5e68363-c162-4e94-8661-bc92d217577a"
-
 jWeather = requests.get(weatherDataUrl)
-
 weather = json.loads(jWeather.text)
 #print(weather)
 
@@ -107,11 +109,36 @@ windspd = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['G'])
 winddir = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['D'])
 #testValues()
 
+#marsweather = maas.latest()
+#print(marsweather.max_temp + ": Max Mars Temperature")
+
+issPassUrl = "https://heavens-above.com/PassSummary.aspx?satid=25544&lat=55.2323&lng=-2.616&loc=Kielder&alt=378&tz=GMT"
+issSoup = BeautifulSoup(urllib.request.urlopen(issPassUrl).read(), "html.parser")
+
+passes=issSoup.find("table","standardTable")
+
+passes = str(passes).replace("><", ">\n<")
+
+extractor = Extractor(passes)
+extractor.parse()
+extractor.write_to_csv(path='.')
+
+# Python CSV tutorial at https://realpython.com/python-csv/
+with open('output.csv', newline='', encoding='utf-8') as f:
+    reader = csv.reader(f)
+    line = 0
+    passlist = []
+    for isspass in reader:
+        if (line <= 1):
+            print (line)
+            line += 1
+        else:
+            passlist.append([isspass[0], isspass[1]])
+            print(isspass)
+            line += 1
+print(passlist)
 
 htmlFile = open("../DISPLAY.html", "w+")
-
-#writing the sunrise, moonrise, sunset and the moonset data to the html file
-#overwrite the file rather than append to it
 
 htmlFile.write(
 '''<!DOCTYPE html>
