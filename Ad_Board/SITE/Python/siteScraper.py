@@ -93,7 +93,13 @@ temp = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['T'])
 precip = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['Pp'])
 #print("Precipitation Probablity: "+ precip + "%")
 weatherCode = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['W'])
-observation = weatherCodeDescs[int(weatherCode)]
+
+if weatherCode ==  "NA":
+    weatherCode = "N/A"
+    observation = weatherCode
+else:
+    observation = weatherCodeDescs[int(weatherCode)]
+
 #print("Observation: " + observation)
 windspd = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['G'])
 winddir = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['D'])
