@@ -38,7 +38,7 @@ from PIL import Image
 # Manipulating strings:
 import string
 
-# Setting environment variables and/or deleting files:
+# Setting environmenopent variables and/or deleting files:
 import os
 
 # Ephemeris tools for calculating moon position:
@@ -165,7 +165,8 @@ moonRange = str(moonRange)
 moonDataUrl = "https://www.heavens-above.com/moon.aspx?lat=55.2323&lng=-2.616&loc=Kielder&alt=378&tz=GMT"
 
 # Get HTML on moon from Heavens Above:
-soup = BeautifulSoup(urllib.request.urlopen(moonDataUrl).read(), "html.parser")
+HTMLMoon = urllib.request.urlopen(moonDataUrl).read()
+soup = BeautifulSoup(HTMLMoon, "html.parser")
 
 # Create URL for moon position image (with Kielder specific location,
 # correct current Modified Julian Date and at desired size):
@@ -213,38 +214,27 @@ moonPositionImage.save("Moon_Position.png")
 # Create URL for moon phase with correct Modified Julian Date:
 moonPhaseUrl = "http://www.heavens-above.com/moonchart.aspx?sz=220&mjd=" + str(mjd)
 
-# Get moon phase image:
-moonPhaseImage = urllib.request.urlretrieve(moonPhaseUrl, "Moon_Phase.png")
-moonPhaseImage = Image.open("Moon_Phase.png")
+# Determine Lunation and pick out Phase Image from List
+nnm = ephem.next_new_moon(kielderObs.date)
+pnm = ephem.previous_new_moon(kielderObs.date)
 
-# Change blue background colour in image to pure black:
-# Convert image to RGB colour space:
-moonPhaseImage = moonPhaseImage.convert("RGBA")
-# Read in pixel colours:
-pixels = moonPhaseImage.getdata()
-newPixels = []
-# Loop over pixels:
-for pixel in pixels:
-# Heavens Above background colour is 0,0,32 in RGB space
-  if pixel[0] == 0 and pixel[1] == 0 and pixel[2] == 32:
-    newPixels.append((0, 0, 0, 0))
-  else:
-    newPixels.append(pixel)
-# Set new pixel array:
-moonPhaseImage.putdata(newPixels)
+lunation=(kielderObs.date-pnm)/(nnm-pnm)
 
-# Crop moon phase image from 220x220 to size:
-moonPhaseLeft = 10
-moonPhaseTop = 1
-moonPhaseRight = 210
-moonPhaseBottom = 210
-moonPhaseImage = moonPhaseImage.crop((moonPhaseLeft, moonPhaseTop, moonPhaseRight, moonPhaseBottom))
+if (lunation < 0.5):
+	moonStatus = 'Waxing'
+else:
+	moonStatus = 'Waning'
 
-# Save revised image:
-moonPhaseImage.save("Moon_Phase.png")
+fileno = int(lunation*713)
 
-# Delete credits mask images now no longer needed:
-os.remove("Moon_Credits_Mask.png")
+moonlist=open("frames/aa_filelist.txt", "r")
+
+for c, line in enumerate(moonlist):
+	#print(c, value)
+	if (c ==fileno):
+		phase = line
+		break
+
 
 
 #############################################
@@ -313,8 +303,7 @@ The Moon Now
 	</tr>
 	<tr>
 		<td id="td02" rowspan = 5>Phase</td>
-		<td id="td03"rowspan = 5 align = "center"><img src = "Moon_Phase.png"></td>
-	</tr>
+		<td id="td03"rowspan = 5 align = "center" style = "background-color:#000000;"><img style = "width:60%;" src = MOON_INFO_TEST/frames/''' + phase + '''></td>	</tr>
 </table>
 
 <div class = "kielderLogo">
