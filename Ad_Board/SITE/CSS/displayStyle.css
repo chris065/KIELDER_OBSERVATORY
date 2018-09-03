@@ -92,7 +92,7 @@ img
 .astroTableDiv
 {
   text-align: center;
-  margin-top: 20px;
+  margin-top: 100px;
   width: 100%;
   font-family: Arial;
   padding-top: 0px;
@@ -104,7 +104,7 @@ img
 .weatherDataTableDiv
 {
   text-align: center;
-  margin-top: 20px;
+  margin-top: 40px;
   width: 100%;
   font-family: Arial;
   padding-top: 0px;
@@ -147,7 +147,7 @@ td
   font-family: Arial;
   width: 100%;
   font-size: 30px;
-  margin-top: 150px;
+  margin-top: 110px;
   padding: 40px;
 }
 table.eventTable

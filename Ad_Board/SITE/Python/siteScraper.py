@@ -76,6 +76,8 @@ def testValues():
     print("Feels Like: "+ feelLikeTemp +"°C")
     print("Actual Temp: "+ temp +"°C")
     print("Precipitation Probablity: "+ precip + "%")
+    print("Wind Speed: " + windspd + " mph")
+    print("Wind Direction: " + winddir)
     print("Observation: " + observation)
 
 
@@ -93,7 +95,13 @@ temp = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['T'])
 precip = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['Pp'])
 #print("Precipitation Probablity: "+ precip + "%")
 weatherCode = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['W'])
-observation = weatherCodeDescs[int(weatherCode)]
+
+if weatherCode ==  "NA":
+    weatherCode = "N/A"
+    observation = weatherCode
+else:
+    observation = weatherCodeDescs[int(weatherCode)]
+
 #print("Observation: " + observation)
 windspd = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['G'])
 winddir = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['D'])
@@ -247,7 +255,7 @@ htmlFile.write(
               <td>Event Title</td>
               <td>Spaces</td>
             </tr>
-          </tabel>
+          </table>
         </div>
   </body>
 </html>
