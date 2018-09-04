@@ -18,6 +18,7 @@ from datetime import datetime
 import urllib
 import requests
 import json, requests
+import ephem as e
 
 # Manipulating (crop, resize, save etc.) images:
 from PIL import Image
@@ -30,6 +31,30 @@ weatherUrl = "http://datapoint.metoffice.gov.uk/public/data/val/wxfcs/all/json/3
 getWeather = requests.get(weatherUrl)
 weather = json.loads(getWeather.text)
 
+
+#Setting the style sheet depending on the time of the day
+styleSheet = ""
+darkStyleSheet = ""
+lightStyleSheet = ""
+
+obsLat = '55.232302'
+obsLon = '-2.616033'
+
+obs = e.Observer()
+obs.lat, obs.lon = obsLat, obsLon
+obs.date = datetime.now()
+
+sun = e.Sun()
+sun.compute(obs)
+
+alt = int(str(sun.alt).split(':')[0])
+
+if alt < -6:
+	darkStyleSheet = open("displayStyleDark.css", "r").read()
+	styleSheet = darkStyleSheet
+else:
+	lightStyleSheet = open("displayStyleLight.css", "r").read()
+	styleSheet = lightStyleSheet
 
 
 
@@ -64,10 +89,10 @@ satWeatherImage.save("Sat_Weather.png")
 
 weatherTemp = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['T'])
 
-weatherTempC = str(weatherTemp) + "˚C"
+weatherTempC = str(weatherTemp)
 
 weatherTempF = (int(weatherTemp) * 9/5 + 32)
-weatherTempF = str(round(weatherTempF)) + "˚F"
+weatherTempF = str(round(weatherTempF))
 
 weatherHumidity = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['H'])
 weatherHumidity = str(weatherHumidity) + "%"
@@ -104,102 +129,21 @@ weatherHtml = '''<!DOCTYPE html>
 The Kielder Weather Now
 </title>
 <head>
+
 <style>
-
-body {
-	background-color: #000000;
-}
-
-b {
-	color: #FFFFFF;
-	font-size: 60px;
-	font-weight: bold;
-	font-family: Calibri;
-	position: absolute;
-	left: 40px;
-	top: 40px;
-}
-
-table.weatherTable {
-	position: absolute;
-	top: 140px;
-	right: 40px;
-	width: 1118px;
-	height: 678px;
-	border: 1px solid #FFFFFF;
-	border-collapse: collapse;
-}
-
-th {
-	color: #FFFFFF;
-	background-color: #78BE20;
-	padding: 10px;
-	font-size: 40px;
-	text-align: center;
-	font-weight: bold;
-	font-family: Calibri;
-	border: 1px solid #FFFFFF;
-	border-collapse: collapse;
-}
-
-td#td01 {
-	color: #FFFFFF;
-	padding: 10px;
-	background-color: #777777;
-	font-size: 40px;
-	text-align: left;
-	font-family: Calibri;
-	border: 1px solid #FFFFFF;
-	border-collapse: collapse;
-}
-
-td#td02 {
-	color: #000000;
-	padding: 10px;
-	background-color: #FFFFFF;
-	font-size: 40px;
-	text-align: left;
-	font-family: Calibri;
-	border: 1px solid #777777;
-	border-collapse: collapse;
-}
-
-div.satCloud {
-	position: absolute;
-	top: 140px;
-	left: 40px;
-}
-
-div.kielderLogo {
-	position: absolute;
-	top: 890px;
-	right: 40px;
-}
-
-div.key {
-	color: #78BE20;
-	text-align: center;
-	font-size: 40px;
-	font-weight: bold;
-	font-family: Calibri;
-	padding: 10px;
-}
-
-div.credits {
-	position: relative;
-	top: 990px;
-	left: center;
-	color: #FFFFFF;
-	text-align: center;
-	font-size: 20px;
-	font-weight: bold;
-	font-family: Calibri;
-}
-
+'''+styleSheet+'''
 </style>
+
 </head>
 
 <body>
+
+	<script>
+		setTimeout(function()
+		{
+			location.reload();
+		}, 6*60000)
+	</script>
 
 <div>
 <b>The Kielder Weather Now
@@ -211,7 +155,7 @@ div.credits {
 	<div class = "key">Live Infra-red Cloud Map</div>
 </div>
 
-<div class = "credits">Credit: EUMETSAT &#38 Open Weather Map</div>
+<div class = "credits">Credit: EUMETSAT & Met Office</div>
 
 <table class = "weatherTable">
 	<tr>
@@ -219,7 +163,7 @@ div.credits {
 	</tr>
 	<tr>
 		<td id="td01">Temperature (&#176C) / (&#176F)</td>
-		<td id="td01"><i>''' + str(weatherTempC) + ''' / ''' + str(weatherTempF) + '''</i></td>
+		<td id="td01"><i>''' + str(weatherTempC) + '''&deg;C / ''' + str(weatherTempF) + '''&deg;F</i></td>
 	</tr>
     	<tr>
 		<td id="td02">Humidity (%)</td>
@@ -233,10 +177,6 @@ div.credits {
 		<td id="td02">Precipitation Probablity (%)</td>
 		<td id="td02"><i>''' + str(weatherPrecip) + '''</i></td>
 	</tr>
-	<tr>
-		<td id="td01">Pressure (mBar)</td>
-		<td id="td01"><i>''' + str(weatherPressure) + '''mBar</i></td>
-	</tr>
 
 </table>
 
@@ -246,6 +186,7 @@ div.credits {
 
 </body>
 </html>'''
+
 f.write(weatherHtml)
 
 # Close text file:
