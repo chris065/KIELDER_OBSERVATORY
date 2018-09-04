@@ -134,19 +134,20 @@ with open('output.csv', newline='', encoding='utf-8') as f:
             passday = datetime.datetime.strptime(isspass[0],"\n%d %b\n").replace(year=today.year)
             if (passday.month < today.month):
                 passday = passday + timedelta(years=1)
-
             entry.append(passday)
             for i in range(1,12):
                 if i in [2, 5, 8]:
-                    dummytime = datetime.datetime.strptime(isspass[i], "%H:%M:%S")
-                    passtime = datetime.time(dummytime.hour, dummytime.minute, dummytime.second)
-                    print(passtime)
+                    dummy = datetime.datetime.strptime(isspass[i], "%H:%M:%S")
+                    passtime = datetime.datetime(passday.year, passday.month, passday.day, dummy.hour, dummy.minute, dummy.second)
+                    if i in [5,8]:
+                        if (passtime < entry[2]):
+                            passtime = passtime + timedelta(days=1)
                     entry.append(passtime)
                 else:
                     entry.append(isspass[i].strip('°'))
             passlist.append(entry)
             line += 1
-print(passlist)
+
 
 htmlFile = open("../DISPLAY.html", "w+")
 
