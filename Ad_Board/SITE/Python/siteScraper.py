@@ -113,24 +113,25 @@ winddir = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['D'])
 #print(marsweather.max_temp + ": Max Mars Temperature")
 
 issPassUrl = "https://heavens-above.com/PassSummary.aspx?satid=25544&lat=55.2323&lng=-2.616&loc=Kielder&alt=378&tz=GMT"
+#issPassUrl = open("ISSVisiblePasses.html", "r")
 issSoup = BeautifulSoup(urllib.request.urlopen(issPassUrl).read(), "html.parser")
-
+#issSoup = BeautifulSoup(issPassUrl.read(), "html.parser")
 passes=issSoup.find("table","standardTable")
 passes = str(passes).replace("><", ">\n<") # Separate table elements into new lines for Extractor
 extractor = Extractor(passes)
 extractor.parse()
 extractor.write_to_csv(path='.')
-
+#issPassUrl.close()
 # Python CSV tutorial at https://realpython.com/python-csv/
 with open('output.csv', newline='', encoding='utf-8') as f:
     reader = csv.reader(f)
     line = 0
     passlist = []
     for isspass in reader:
-        if (line <= 1):
+        if (line <= 1): # Skip first two lines of header data
             line += 1
         else:
-            entry = []
+            entry = [] # Create new nested list for each pass
             passday = datetime.datetime.strptime(isspass[0],"\n%d %b\n").replace(year=today.year)
             if (passday.month < today.month):
                 passday = passday + timedelta(years=1)
@@ -140,8 +141,15 @@ with open('output.csv', newline='', encoding='utf-8') as f:
                     dummy = datetime.datetime.strptime(isspass[i], "%H:%M:%S")
                     passtime = datetime.datetime(passday.year, passday.month, passday.day, dummy.hour, dummy.minute, dummy.second)
                     if i in [5,8]:
+                        print(passtime, entry[2])
                         if (passtime < entry[2]):
                             passtime = passtime + timedelta(days=1)
+                            if ((passtime-entry[2]) > datetime.timedelta(hours=-2)):
+                                passtime = passtime + datetime.timedelta(hours=1)
+                            elif ((entry[i]-entry[2]) < datetime.timedelta(hours=-22)):
+                                passtime = passtime + datetime.timedelta(days=1)
+                        if ((passtime-entry[2]) > datetime.timedelta(hours=1)):
+                            passtime = passtime - datetime.timedelta(hours=1)
                     entry.append(passtime)
                 else:
                     entry.append(isspass[i].strip('°'))
