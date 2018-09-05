@@ -54,6 +54,35 @@ obs = e.Observer()
 obs.lat, obs.lon = obsLat, obsLon
 obs.date = datetime.datetime.utcnow()
 
+# Get Moon phase info here as time will be changed for Moonrise/set times
+moon = e.Moon()
+moon.compute(obs)
+# Illumination (%):
+moonPhase = moon.moon_phase
+moonPhase = decimal.Decimal(moonPhase * 100.0)
+moonPhase = round(moonPhase, 1)
+moonPhase = str(moonPhase)
+# Determine Lunation and pick out Phase Image from List
+nnm = ephem.next_new_moon(obs.date)
+pnm = ephem.previous_new_moon(obs.date)
+lunation=(obs.date-pnm)/(nnm-pnm)
+
+if (lunation < 0.5):
+	moonStatus = 'Waxing'
+else:
+	moonStatus = 'Waning'
+
+fileno = int(lunation*713)
+
+moonlist=open("../IMG/moonframes/aa_filelist.txt", "r")
+for c, line in enumerate(moonlist):
+	#print(c, value)
+	if (c ==fileno):
+		phase = line
+		break
+moonlist.close()
+
+
 #Sun values
 sunset = obs.next_setting(e.Sun())
 # Change Time to Sunset to get Moon times and next sunrise
@@ -72,6 +101,8 @@ moonrise = moonrise.astimezone(tz=gb)
 riseset = [("Sunrise", sunrise),("Sunset", sunset),("Moonrise",moonrise),("Moonset",moonset)]
 riseset.sort(key=takeSecond)
 #print(riseset)
+
+
 
 #Code to pull back the weather
 def testValues():
@@ -105,8 +136,9 @@ else:
     observation = weatherCodeDescs[int(weatherCode)]
 
 #print("Observation: " + observation)
-windspd = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['G'])
+windspd = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['S'])
 winddir = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['D'])
+gust = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['G'])
 #testValues()
 
 #marsweather = maas.latest()
@@ -141,15 +173,13 @@ with open('output.csv', newline='', encoding='utf-8') as f:
                     dummy = datetime.datetime.strptime(isspass[i], "%H:%M:%S")
                     passtime = datetime.datetime(passday.year, passday.month, passday.day, dummy.hour, dummy.minute, dummy.second)
                     if i in [5,8]:
-                        print(passtime, entry[2])
-                        if (passtime < entry[2]):
-                            passtime = passtime + timedelta(days=1)
-                            if ((passtime-entry[2]) > datetime.timedelta(hours=-2)):
-                                passtime = passtime + datetime.timedelta(hours=1)
-                            elif ((entry[i]-entry[2]) < datetime.timedelta(hours=-22)):
-                                passtime = passtime + datetime.timedelta(days=1)
+                        print(entry[2], passtime)
                         if ((passtime-entry[2]) > datetime.timedelta(hours=1)):
                             passtime = passtime - datetime.timedelta(hours=1)
+                        elif ((passtime-entry[2]) < datetime.timedelta(hours=-22)):
+                            passtime = passtime + datetime.timedelta(days=1)
+                        elif ((passtime-entry[2]) > datetime.timedelta(minutes=-40)):
+                            passtime = passtime + datetime.timedelta(hours=1)
                     entry.append(passtime)
                 else:
                     entry.append(isspass[i].strip('°'))
@@ -218,20 +248,22 @@ htmlFile.write(
       <div class="weatherDataTableDiv">
         <table class="weatherDataTable">
           <tr>
+            <th>Current Weather</th>
             <th>Temperature (Feels Like)</th>
-            <th>Wind Speed (Dir)</th>
+            <th>Wind Speed (Gust)</th>
+            <th>Wind Direction</th>
             <th>Precipitation Probability</th>
-            <th>Current Observation</th>
           </tr>
           <tr>
+            <!--Insert Current Observation here-->
+            <td>'''+str(observation)+'''</td>
             <!--Insert Feels Like Temp here-->
             <td>'''+str(temp)+''' &deg;C ('''+str(feelLikeTemp)+''' &deg;C)</td>
             <!--Insert Wind Info here-->
-            <td>'''+str(windspd)+''' mph ('''+str(winddir)+''')</td>
+            <td>'''+str(windspd)+''' mph ('''+str(gust)+''')</td>
+            <td>'''+str(winddir)+'''</td>
             <!--Insert Precipertaion Probability here-->
             <td>'''+str(precip)+'''&percnt;</td>
-            <!--Insert Current Observation here-->
-            <td>'''+str(observation)+'''</td>
           </tr>
         </table>
       </div>
