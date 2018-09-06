@@ -59,12 +59,11 @@ moon = e.Moon()
 moon.compute(obs)
 # Illumination (%):
 moonPhase = moon.moon_phase
-moonPhase = decimal.Decimal(moonPhase * 100.0)
-moonPhase = round(moonPhase, 1)
+moonPhase = round((moonPhase * 100), 1)
 moonPhase = str(moonPhase)
 # Determine Lunation and pick out Phase Image from List
-nnm = ephem.next_new_moon(obs.date)
-pnm = ephem.previous_new_moon(obs.date)
+nnm = e.next_new_moon(obs.date)
+pnm = e.previous_new_moon(obs.date)
 lunation=(obs.date-pnm)/(nnm-pnm)
 
 if (lunation < 0.5):
@@ -86,6 +85,7 @@ moonlist.close()
 #Sun values
 sunset = obs.next_setting(e.Sun())
 # Change Time to Sunset to get Moon times and next sunrise
+# Note this forces the Sunset time to be the earliest time returned
 obs.date = sunset
 
 sunset = sunset.datetime().replace(tzinfo=pytz.utc)
@@ -116,7 +116,7 @@ def testValues():
     print("Observation: " + observation)
 
 
-weatherDataUrl = "http://datapoint.metoffice.gov.uk/public/data/val/wxfcs/all/json/352090?res=3hourly&key=c5e68363-c162-4e94-8661-bc92d217577a"
+weatherDataUrl = "http://datapoint.metoffice.gov.uk/public/data/val/wxfcs/all/json/354887?res=3hourly&key=c5e68363-c162-4e94-8661-bc92d217577a"
 jWeather = requests.get(weatherDataUrl)
 weather = json.loads(jWeather.text)
 #print(weather)
@@ -129,13 +129,18 @@ precip = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['Pp'])
 #print("Precipitation Probablity: "+ precip + "%")
 weatherCode = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['W'])
 
+# Handle No Data errors
 if weatherCode ==  "NA":
-    weatherCode = "N/A"
-    observation = weatherCode
+    observation = "N/A"
 else:
     observation = weatherCodeDescs[int(weatherCode)]
 
-#print("Observation: " + observation)
+# Remove day/night qualifiers from Observation text
+# Text not removed from list in case we want to add a picture later on
+for text in [" (day)", " (night)"]:
+    if observation.endswith(text):
+        observation = observation.replace(text, "")
+
 windspd = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['S'])
 winddir = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['D'])
 gust = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['G'])
@@ -242,7 +247,7 @@ htmlFile.write(
       <!--End of Code for automatic slide show-->
 
       <div class="date">
-      Tonight: '''+datestr+'''
+      Tonight: <b>'''+datestr+'''</b>
       </div>
 
       <div class="weatherDataTableDiv">
@@ -267,7 +272,8 @@ htmlFile.write(
           </tr>
         </table>
       </div>
-
+      <!-- Add in div tag/table to showcase moon illumination info and
+      phase image-->
         <div class="astroTableDiv">
           <table class="astroTable">
             <tr>
