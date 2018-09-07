@@ -7,6 +7,10 @@ from bs4 import BeautifulSoup
 from html_table_extractor.extractor import Extractor
 import csv
 
+import json, requests
+import urllib
+from PIL import Image
+
 # Key definition for moonrise/set table
 def takeSecond(elem):
     return elem[1]
@@ -149,6 +153,34 @@ gust = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['G'])
 
 #marsweather = maas.latest()
 #print(marsweather.max_temp + ": Max Mars Temperature")
+=======
+issAboveView = "http://www.heavens-above.com/orbitdisplay.aspx?icon=iss&width=300&height=300&mode=A&satid=25544"
+issGroundTrack = "http://www.heavens-above.com/orbitdisplay.aspx?icon=iss&width=1500&height=750&mode=M&satid=25544"
+
+issAboveImg = urllib.request.urlretrieve(issAboveView, "../IMG/issAbove.png")
+issAboveImg = Image.open("../IMG/issAbove.png")
+
+#Mask out the water mark for the above view
+issCreditMaskAbove = 107, 8
+issCreditMaskAbove = Image.new("RGBA", issCreditMaskAbove)
+issCreditMaskAbove.save("../IMG/issCreditMaskAbove.png")
+issCreditMarkAbove = 190, 290
+issAboveImg.paste(issCreditMaskAbove, issCreditMarkAbove)
+issAboveImg.save("../IMG/issAbove.png")
+#end of mask code for above view
+
+issGroundImg = urllib.request.urlretrieve(issGroundTrack, "../IMG/issGround.png")
+issGroundImg = Image.open("../IMG/issGround.png")
+
+#Mask out the water mark for the ground view
+issCreditMaskGround = 107, 8
+issCreditMaskGround = Image.new("RGBA", issCreditMaskGround)
+issCreditMaskGround.save("../IMG/issCreditMaskGround.png")
+issCreditMarkGround = 1390, 740
+issGroundImg.paste(issCreditMaskGround, issCreditMarkGround)
+issGroundImg.save("../IMG/issGround.png")
+#end of mask code for ground view
+
 
 
 htmlFile = open("../DISPLAY.html", "w+")
@@ -180,6 +212,16 @@ htmlFile.write(
               <div class="text">Image taken in a light pollution free enviroment</div>
             </div>
 
+            <div class="slides fade">
+              <p style="text-align: center;"><img src="IMG/issAbove.png" style="width: 50%;"></p>
+              <div class="text">current position of the ISS</div>
+            </div>
+
+            <div class="slides fade">
+               <p style="text-align: center;"><img src="IMG/issGround.png" style="width: 100%;"></p>
+              <div class="text">current position of the ISS</div>
+            </div>
+
           </div>
 
           <script>
@@ -200,7 +242,7 @@ htmlFile.write(
               slideIndex = 1
             }
             slides[slideIndex-1].style.display = "block";
-            setTimeout(showSlides, 3000);
+            setTimeout(showSlides, 5000); //Show image for 5 seconds
           }
           </script>
 
@@ -234,6 +276,10 @@ htmlFile.write(
       </div>
       <!-- Add in div tag/table to showcase moon illumination info and
       phase image-->
+
+      <div class="weatherIconDiv">
+        <img class="weatherIcon" src="IMG/PartlyCloudy.png">
+     </div>
         <div class="astroTableDiv">
           <table class="astroTable">
             <tr>

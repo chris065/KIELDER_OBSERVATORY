@@ -1,11 +1,3 @@
-<!DOCTYPE html>
-<html>
-<title>
-The Kielder Weather Now
-</title>
-<head>
-
-<style>
 body {
 	background-color: #000000;
 }
@@ -95,58 +87,3 @@ div.credits {
 	font-weight: bold;
 	font-family: Calibri;
 }
-
-</style>
-
-</head>
-
-<body>
-
-	<script>
-		setTimeout(function()
-		{
-			location.reload();
-		}, 6*60000)
-	</script>
-
-<div>
-<b>The Kielder Weather Now
-</b>
-</div>
-
-<div class = "satCloud">
-	<img src = "Sat_Weather.png">
-	<div class = "key">Live Infra-red Cloud Map</div>
-</div>
-
-<div class = "credits">Credit: EUMETSAT & Met Office</div>
-
-<table class = "weatherTable">
-	<tr>
-		<th>Kielder Live Weather</th>
-	</tr>
-	<tr>
-		<td id="td01">Temperature (&#176C) / (&#176F)</td>
-		<td id="td01"><i>10&deg;C / 50&deg;F</i></td>
-	</tr>
-    	<tr>
-		<td id="td02">Humidity (%)</td>
-		<td id="td02"><i>93%</i></td>
-	</tr>
-	<tr>
-		<td id="td01">Wind Speed/Direction (mph) / Compass</td>
-		<td id="td01"><i>4mph / NW</i></td>
-	</tr>
-	<tr>
-		<td id="td02">Precipitation Probablity (%)</td>
-		<td id="td02"><i>8%</i></td>
-	</tr>
-
-</table>
-
-<div class = "kielderLogo">
-	<img src = "Kielder_Logo.png">
-</div>
-
-</body>
-</html>

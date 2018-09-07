@@ -15,9 +15,10 @@
 from datetime import datetime
 
 # Parsing information and images from HTML websites:
-from urllib2 import urlopen
 import urllib
 import requests
+import json, requests
+import ephem as e
 
 # Manipulating (crop, resize, save etc.) images:
 from PIL import Image
@@ -26,7 +27,35 @@ from PIL import Image
 import string
 
 # Getting weather data:
-import pyowm
+weatherUrl = "http://datapoint.metoffice.gov.uk/public/data/val/wxfcs/all/json/352090?res=3hourly&key=c5e68363-c162-4e94-8661-bc92d217577a"
+getWeather = requests.get(weatherUrl)
+weather = json.loads(getWeather.text)
+
+
+#Setting the style sheet depending on the time of the day
+styleSheet = ""
+darkStyleSheet = ""
+lightStyleSheet = ""
+
+obsLat = '55.232302'
+obsLon = '-2.616033'
+
+obs = e.Observer()
+obs.lat, obs.lon = obsLat, obsLon
+obs.date = datetime.now()
+
+sun = e.Sun()
+sun.compute(obs)
+
+alt = int(str(sun.alt).split(':')[0])
+
+if alt < -6:
+	darkStyleSheet = open("displayStyleDark.css", "r").read()
+	styleSheet = darkStyleSheet
+else:
+	lightStyleSheet = open("displayStyleLight.css", "r").read()
+	styleSheet = lightStyleSheet
+
 
 
 #############################################
@@ -40,7 +69,7 @@ import pyowm
 satUrl = "http://api.sat24.com/crop?type=infraPolair&lat=55.233&lon=-2.5881&width=800&height=800&zoom=0.60&continent=eu"
 
 # Get satellite weather image:
-satWeatherImage = urllib.urlretrieve(satUrl, "Sat_Weather.png")
+satWeatherImage = urllib.request.urlretrieve(satUrl, "Sat_Weather.png")
 satWeatherImage = Image.open("Sat_Weather.png")
 
 # Crop satellite image from 800 x 800 to remove ugly timestamps:
@@ -58,42 +87,32 @@ satWeatherImage.save("Sat_Weather.png")
 # Get weather update:
 #############################################
 
-# Set API key for OpenWeatherMap.com:
-owm = pyowm.OWM('0733a9c5266d2113bb9c19114c0c9cd8')
+weatherTemp = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['T'])
 
-# Set Kielder Observatory location:
-latitude = 55.2305486
-longitude = -2.6054411
-altitude = 370
+weatherTempC = str(weatherTemp)
 
-# Create forecast location:
-obsWeather = owm.weather_at_coords(latitude, longitude)
+weatherTempF = (int(weatherTemp) * 9/5 + 32)
+weatherTempF = str(round(weatherTempF))
 
-# Get time of weather:
-kielderWeather = obsWeather.get_weather()
+weatherHumidity = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['H'])
+weatherHumidity = str(weatherHumidity) + "%"
 
-# Get time of weather report:
-weatherTimeStamp = kielderWeather.get_reference_time(timeformat = 'iso')
-weatherTimeStamp = weatherTimeStamp[11:19]
-# Get cloud coverage:
-weatherClouds = kielderWeather.get_clouds()
-weatherClouds = str(weatherClouds) + '%'
-# Get wind direction and speed:
-weatherWind = kielderWeather.get_wind()
-weatherWindSpeed = str(weatherWind['speed']) + 'mph'
-weatherWindDirection = str(weatherWind['deg'])
-# Get humidity:
-weatherHumidity = kielderWeather.get_humidity()
-weatherHumidity = str(weatherHumidity) + '%'
-# Get temperature in C:
-weatherTempC = kielderWeather.get_temperature(unit = 'celsius')
-weatherTempC = str(weatherTempC['temp'])
-# Get temperature in F:
-weatherTempF = kielderWeather.get_temperature(unit = 'fahrenheit')
-weatherTempF = str(weatherTempF['temp'])
-# Get air pressure in milliBars:
-weatherPressure = kielderWeather.get_pressure()
-weatherPressure = str(weatherPressure['press'])
+weatherWindSpeed = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['S'])
+weatherWindSpeed = str(weatherWindSpeed) + "mph"
+
+weatherWindDirection = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['D'])
+weatherWindDirection = str(weatherWindDirection)
+
+weatherPrecip = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['Pp'])
+weatherPrecip = str(weatherPrecip) + "%"
+
+weatherPressure = ""
+
+
+
+
+
+
 
 
 #############################################
@@ -110,102 +129,21 @@ weatherHtml = '''<!DOCTYPE html>
 The Kielder Weather Now
 </title>
 <head>
+
 <style>
-
-body {
-	background-color: #000000;
-}
-
-b {
-	color: #FFFFFF;
-	font-size: 60px;
-	font-weight: bold;
-	font-family: Calibri;
-	position: absolute;
-	left: 40px;
-	top: 40px;
-}
-
-table.weatherTable {
-	position: absolute;
-	top: 140px;
-	right: 40px;
-	width: 1118px;
-	height: 678px;
-	border: 1px solid #FFFFFF;
-	border-collapse: collapse;
-}
-
-th {
-	color: #FFFFFF;
-	background-color: #78BE20;
-	padding: 10px;
-	font-size: 40px;
-	text-align: center;
-	font-weight: bold;
-	font-family: Calibri;
-	border: 1px solid #FFFFFF;
-	border-collapse: collapse;
-}
-
-td#td01 {
-	color: #FFFFFF;
-	padding: 10px;
-	background-color: #777777;
-	font-size: 40px;
-	text-align: left;
-	font-family: Calibri;
-	border: 1px solid #FFFFFF;
-	border-collapse: collapse;
-}
-
-td#td02 {
-	color: #000000;
-	padding: 10px;
-	background-color: #FFFFFF;
-	font-size: 40px;
-	text-align: left;
-	font-family: Calibri;
-	border: 1px solid #777777;
-	border-collapse: collapse;
-}
-
-div.satCloud {
-	position: absolute;
-	top: 140px;
-	left: 40px;
-}
-
-div.kielderLogo {
-	position: absolute;
-	top: 890px;
-	right: 40px;
-}
-
-div.key {
-	color: #78BE20;
-	text-align: center;
-	font-size: 40px;
-	font-weight: bold;
-	font-family: Calibri;
-	padding: 10px;
-}
-
-div.credits {
-	position: relative;
-	top: 990px;
-	left: center;
-	color: #FFFFFF;
-	text-align: center;
-	font-size: 20px;
-	font-weight: bold;
-	font-family: Calibri;
-}
-
+'''+styleSheet+'''
 </style>
+
 </head>
 
 <body>
+
+	<script>
+		setTimeout(function()
+		{
+			location.reload();
+		}, 6*60000)
+	</script>
 
 <div>
 <b>The Kielder Weather Now
@@ -213,45 +151,42 @@ div.credits {
 </div>
 
 <div class = "satCloud">
-	<img src = "C:\Users\Kielder Observatory\Desktop\Kielder_Displays\Weather\Sat_Weather.png">
+	<img src = "Sat_Weather.png">
 	<div class = "key">Live Infra-red Cloud Map</div>
 </div>
 
-<div class = "credits">Credit: EUMETSAT &#38 Open Weather Map</div>
+<div class = "credits">Credit: EUMETSAT & Met Office</div>
 
 <table class = "weatherTable">
 	<tr>
 		<th>Kielder Live Weather</th>
 	</tr>
 	<tr>
-		<td id="td01">Temperature (&#176C)/(&#176F)</td>
-		<td id="td01"><i>''' + str(weatherTempC) + '''&#176C/''' + str(weatherTempF) + '''&#176F</i></td>
+		<td id="td01">Temperature (&#176C) / (&#176F)</td>
+		<td id="td01"><i>''' + str(weatherTempC) + '''&deg;C / ''' + str(weatherTempF) + '''&deg;F</i></td>
 	</tr>
     	<tr>
 		<td id="td02">Humidity (%)</td>
 		<td id="td02"><i>''' + str(weatherHumidity) + '''</i></td>
 	</tr>
 	<tr>
-		<td id="td01">Wind Speed/Direction (mph)/(&#176)</td>
-		<td id="td01"><i>''' + str(weatherWindSpeed) + '''/''' + str(weatherWindDirection) + '''&#176</i></td>
+		<td id="td01">Wind Speed/Direction (mph) / Compass</td>
+		<td id="td01"><i>''' + str(weatherWindSpeed) + ''' / ''' + str(weatherWindDirection) + '''</i></td>
 	</tr>
 	<tr>
-		<td id="td02">Cloud Cover (%)</td>
-		<td id="td02"><i>''' + str(weatherClouds) + '''</i></td>
-	</tr>
-	<tr>
-		<td id="td01">Pressure (mBar)</td>
-		<td id="td01"><i>''' + str(weatherPressure) + '''mBar</i></td>
+		<td id="td02">Precipitation Probablity (%)</td>
+		<td id="td02"><i>''' + str(weatherPrecip) + '''</i></td>
 	</tr>
 
 </table>
 
 <div class = "kielderLogo">
-	<img src = "C:\Users\Kielder Observatory\Desktop\Kielder_Displays\Weather\Kielder_Logo.png">
+	<img src = "Kielder_Logo.png">
 </div>
 
 </body>
 </html>'''
+
 f.write(weatherHtml)
 
 # Close text file:
