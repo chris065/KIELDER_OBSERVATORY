@@ -116,11 +116,12 @@ def testValues():
     print("Observation: " + observation)
 
 
-weatherDataUrl = "http://datapoint.metoffice.gov.uk/public/data/val/wxfcs/all/json/354887?res=3hourly&key=c5e68363-c162-4e94-8661-bc92d217577a"
+weatherDataUrl = "http://datapoint.metoffice.gov.uk/public/data/val/wxfcs/all/json/352090?res=3hourly&key=c5e68363-c162-4e94-8661-bc92d217577a"
 jWeather = requests.get(weatherDataUrl)
 weather = json.loads(jWeather.text)
 #print(weather)
 
+location = (weather['SiteRep']['DV']['Location']['name'])
 feelLikeTemp = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['F'])
 #print("Feels Like: "+ feelLikeTemp +"°C")
 temp = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['T'])
@@ -149,10 +150,10 @@ gust = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['G'])
 #marsweather = maas.latest()
 #print(marsweather.max_temp + ": Max Mars Temperature")
 
-issPassUrl = "https://heavens-above.com/PassSummary.aspx?satid=25544&lat=55.2323&lng=-2.616&loc=Kielder&alt=378&tz=GMT"
-#issPassUrl = open("ISSVisiblePasses.html", "r")
-issSoup = BeautifulSoup(urllib.request.urlopen(issPassUrl).read(), "html.parser")
-#issSoup = BeautifulSoup(issPassUrl.read(), "html.parser")
+#issPassUrl = "https://heavens-above.com/PassSummary.aspx?satid=25544&lat=55.2323&lng=-2.616&loc=Kielder&alt=378&tz=GMT"
+issPassUrl = open("ISSVisiblePasses.html", "r")
+#issSoup = BeautifulSoup(urllib.request.urlopen(issPassUrl).read(), "html.parser")
+issSoup = BeautifulSoup(issPassUrl.read(), "html.parser")
 passes=issSoup.find("table","standardTable")
 passes = str(passes).replace("><", ">\n<") # Separate table elements into new lines for Extractor
 extractor = Extractor(passes)
@@ -189,6 +190,19 @@ with open('output.csv', newline='', encoding='utf-8') as f:
                 else:
                     entry.append(isspass[i].strip('°'))
             passlist.append(entry)
+            # Heavens Above Table parsed, perform calculations for display
+            dur = entry[8] - entry[2]
+            entry.append(str(dur))
+
+            if int(entry[3]) < 20:
+                entry.append("Rises")
+            else:
+                entry.append("Appears overhead")
+
+            if int(entry[9]) < 20:
+                entry.append("Sets")
+            else:
+                entry.append("Disappears overhead")
             line += 1
 
 
@@ -199,7 +213,8 @@ htmlFile.write(
 <html>
   <head>
       <title>AD DISPLAY - KIELDER OBSERVATORY</title>
-      <link type="text/css" rel="stylesheet" href="CSS/displayStyle.css"/>
+      <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,700" rel="stylesheet">
+      <link type="text/css" rel="stylesheet" href="CSS/haydensStyle.css"/>
   </head>
 
   <body>
@@ -247,7 +262,7 @@ htmlFile.write(
       <!--End of Code for automatic slide show-->
 
       <div class="date">
-      Tonight: <b>'''+datestr+'''</b>
+      Tonight: <b>'''+datestr+'''</b> in <b>'''+str(location).title()+'''</b>
       </div>
 
       <div class="weatherDataTableDiv">
