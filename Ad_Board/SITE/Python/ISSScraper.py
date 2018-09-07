@@ -6,11 +6,12 @@ import csv
 from bs4 import BeautifulSoup
 from html_table_extractor.extractor import Extractor
 
+today = datetime.date.today()
 
-#issPassUrl = "https://heavens-above.com/PassSummary.aspx?satid=25544&lat=55.2323&lng=-2.616&loc=Kielder&alt=378&tz=GMT"
-issPassUrl = open("ISSVisiblePasses.html", "r")
-#issSoup = BeautifulSoup(urllib.request.urlopen(issPassUrl).read(), "html.parser")
-issSoup = BeautifulSoup(issPassUrl.read(), "html.parser")
+issPassUrl = "https://heavens-above.com/PassSummary.aspx?satid=25544&lat=55.2323&lng=-2.616&loc=Kielder&alt=378&tz=GMT"
+#issPassUrl = open("ISSVisiblePasses.html", "r")
+issSoup = BeautifulSoup(urllib.request.urlopen(issPassUrl).read(), "html.parser")
+#issSoup = BeautifulSoup(issPassUrl.read(), "html.parser")
 
 passes=issSoup.find("table","standardTable")
 passes = str(passes).replace("><", ">\n<") # Separate table elements into new lines for Extractor
@@ -37,30 +38,54 @@ with open('output.csv', newline='', encoding='utf-8') as f:
                     dummy = datetime.datetime.strptime(isspass[i], "%H:%M:%S")
                     passtime = datetime.datetime(passday.year, passday.month, passday.day, dummy.hour, dummy.minute, dummy.second)
                     if i in [5,8]:
-                        print(entry[2], passtime)
-                        if ((passtime-entry[2]) > datetime.timedelta(hours=1)):
+                        tdelt = passtime - entry[2]
+                        if (tdelt > datetime.timedelta(seconds=-1) and tdelt < datetime.timedelta(minutes=15)):
+                            pass
+                        elif (tdelt > datetime.timedelta(hours=1)):
                             passtime = passtime - datetime.timedelta(hours=1)
-                        elif ((passtime-entry[2]) < datetime.timedelta(hours=-22)):
+                        elif (tdelt < datetime.timedelta(hours=-22)):
                             passtime = passtime + datetime.timedelta(days=1)
-                        elif ((passtime-entry[2]) > datetime.timedelta(minutes=-40)):
+                        elif (tdelt > datetime.timedelta(minutes=-40)):
                             passtime = passtime + datetime.timedelta(hours=1)
                     entry.append(passtime)
+                elif i in [1,3,6,9]:
+                    entry.append(float(isspass[i].strip('°')))
                 else:
-                    entry.append(isspass[i].strip('°'))
+                    entry.append(isspass[i])
             # Heavens Above Table parsed, perform calculations for display
             dur = entry[8] - entry[2]
-            entry.append(str(dur))
+            entry.append(dur)
+            desc = ""
+            if entry[1] < -2.8:
+                desc = desc + "bright, "
+            elif (entry[1]) > -1.4:
+                desc = desc + "faint, "
 
-            if int(entry[3]) < 20:
-                entry.append("Rises")
+            if entry[6] > 35:
+                desc = desc + "overhead pass. "
+            elif entry[6] < 15:
+                desc = desc + "low-altitude pass. "
+            if desc[-6:] != "pass. ":
+                desc = desc.replace(", ", " pass. ")
+            desc = desc.capitalize()
+
+            if int(entry[3]) < 20 and entry[2] != entry[5]:
+                desc = desc + "Rises "
+            elif int(entry[3]) > 35:
+                desc = desc + "Appears overhead "
             else:
-                entry.append("Appears overhead")
+                desc = desc + "Appears mid-pass "
+
+            desc = desc + "towards " + entry[4] + " and "
 
             if int(entry[9]) < 20:
-                entry.append("Sets")
+                desc = desc + "sets "
             else:
-                entry.append("Disappears overhead")
+                desc = desc + "disappears mid-pass "
 
-            passlist.append(entry)
-            print(entry)
+            desc = desc + "after " + str(dur)[3:] + "."
+
+            passlist.append(desc)
+            print(entry[2].strftime("%d %b - %H:%M:%S  --  "), desc)
+#            print(entry)
             line += 1
