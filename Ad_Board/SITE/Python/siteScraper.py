@@ -216,7 +216,6 @@ htmlFile.write(
             <th>Temperature (Feels Like)</th>
             <th>Wind Speed (Dir)</th>
             <th>Precipitation Probability</th>
-            <th>Current Observation</th>
           </tr>
           <tr>
             <!--Insert Feels Like Temp here-->
@@ -226,10 +225,14 @@ htmlFile.write(
             <!--Insert Precipertaion Probability here-->
             <td>'''+str(precip)+'''&percnt;</td>
             <!--Insert Current Observation here-->
-            <td>'''+str(observation)+'''</td>
+            <!--<td>Cloudy</td>-->
           </tr>
         </table>
       </div>
+
+      <div class="weatherIconDiv">
+        <img class="weatherIcon" src="IMG/PartlyCloudy.png">
+     </div>
 
         <div class="astroTableDiv">
           <table class="astroTable">
