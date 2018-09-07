@@ -88,26 +88,54 @@ img
   margin-top: 30px;
   width: 100%;
   padding: 40px;
+  float: left;
 }
 .astroTableDiv
 {
   text-align: center;
-  margin-top: 100px;
+  margin-top: 20px;
   width: 100%;
   font-family: Arial;
   padding: 40px;
   font-size: 30px;
+  float: left;
+}
+.lastMoonTableDiv
+{
+  text-align: center;
+  margin-top: 20px;
+  width: 100%;
+  font-family: Arial;
+  padding: 40px;
+  font-size: 30px;
+  float: left;
+
 }
 .weatherDataTableDiv
 {
   text-align: center;
   margin-top: 40px;
-  width: 100%;
+  width: 75%;
   font-family: Arial;
   padding: 40px;
   font-size: 30px;
+  float: left;
+}
+.weatherIcon
+{
+  width: 25%;
+  float: right;
+  padding: 40px;
+  margin-top: 25px;
+
 }
 table.astroTable
+{
+  width: 100%;
+  margin-right: 10px;
+  border-collapse: collapse;
+}
+table.lastMoonTable
 {
   width: 100%;
   margin-right: 10px;
@@ -142,6 +170,7 @@ td
   font-size: 30px;
   margin-top: 110px;
   padding: 40px;
+  float: left;
 }
 table.eventTable
 {

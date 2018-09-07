@@ -4,7 +4,7 @@ import pytz
 import json, requests, urllib
 #from nasa import maas
 from bs4 import BeautifulSoup
-from html_table_extractor.extractor import Extractor
+#from html_table_extractor.extractor import Extractor
 import csv
 
 import json, requests
@@ -153,7 +153,6 @@ gust = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['G'])
 
 #marsweather = maas.latest()
 #print(marsweather.max_temp + ": Max Mars Temperature")
-=======
 issAboveView = "http://www.heavens-above.com/orbitdisplay.aspx?icon=iss&width=300&height=300&mode=A&satid=25544"
 issGroundTrack = "http://www.heavens-above.com/orbitdisplay.aspx?icon=iss&width=1500&height=750&mode=M&satid=25544"
 
@@ -248,22 +247,15 @@ htmlFile.write(
 
       <!--End of Code for automatic slide show-->
 
-      <div class="date">
-      Tonight: <b>'''+datestr+'''</b> in <b>'''+str(location).title()+'''</b>
-      </div>
-
       <div class="weatherDataTableDiv">
         <table class="weatherDataTable">
           <tr>
-            <th>Current Weather</th>
             <th>Temperature (Feels Like)</th>
             <th>Wind Speed (Gust)</th>
             <th>Wind Direction</th>
             <th>Precipitation Probability</th>
           </tr>
           <tr>
-            <!--Insert Current Observation here-->
-            <td>'''+str(observation)+'''</td>
             <!--Insert Feels Like Temp here-->
             <td>'''+str(temp)+''' &deg;C ('''+str(feelLikeTemp)+''' &deg;C)</td>
             <!--Insert Wind Info here-->
@@ -278,8 +270,13 @@ htmlFile.write(
       phase image-->
 
       <div class="weatherIconDiv">
-        <img class="weatherIcon" src="IMG/PartlyCloudy.png">
+        <img class="weatherIcon" src="IMG/metofficeicons/metimg'''+str(weatherCode)+'''.svg">
      </div>
+
+     <div class="date">
+     Tonight: <b>'''+datestr+'''</b> in <b>'''+str(location).title()+'''</b>
+     </div>
+
         <div class="astroTableDiv">
           <table class="astroTable">
             <tr>
