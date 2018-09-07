@@ -1,6 +1,12 @@
 import ephem as e
 import datetime
 import pytz
+import json, requests, urllib
+#from nasa import maas
+from bs4 import BeautifulSoup
+from html_table_extractor.extractor import Extractor
+import csv
+
 import json, requests
 import urllib
 from PIL import Image
@@ -52,9 +58,38 @@ obs = e.Observer()
 obs.lat, obs.lon = obsLat, obsLon
 obs.date = datetime.datetime.utcnow()
 
+# Get Moon phase info here as time will be changed for Moonrise/set times
+moon = e.Moon()
+moon.compute(obs)
+# Illumination (%):
+moonPhase = moon.moon_phase
+moonPhase = round((moonPhase * 100), 1)
+moonPhase = str(moonPhase)
+# Determine Lunation and pick out Phase Image from List
+nnm = e.next_new_moon(obs.date)
+pnm = e.previous_new_moon(obs.date)
+lunation=(obs.date-pnm)/(nnm-pnm)
+
+if (lunation < 0.5):
+	moonStatus = 'Waxing'
+else:
+	moonStatus = 'Waning'
+
+fileno = int(lunation*713)
+
+moonlist=open("../IMG/moonframes/aa_filelist.txt", "r")
+for c, line in enumerate(moonlist):
+	#print(c, value)
+	if (c ==fileno):
+		phase = line
+		break
+moonlist.close()
+
+
 #Sun values
 sunset = obs.next_setting(e.Sun())
 # Change Time to Sunset to get Moon times and next sunrise
+# Note this forces the Sunset time to be the earliest time returned
 obs.date = sunset
 
 sunset = sunset.datetime().replace(tzinfo=pytz.utc)
@@ -71,6 +106,8 @@ riseset = [("Sunrise", sunrise),("Sunset", sunset),("Moonrise",moonrise),("Moons
 riseset.sort(key=takeSecond)
 #print(riseset)
 
+
+
 #Code to pull back the weather
 def testValues():
     #print the whole JSON array
@@ -84,12 +121,11 @@ def testValues():
 
 
 weatherDataUrl = "http://datapoint.metoffice.gov.uk/public/data/val/wxfcs/all/json/352090?res=3hourly&key=c5e68363-c162-4e94-8661-bc92d217577a"
-
 jWeather = requests.get(weatherDataUrl)
-
 weather = json.loads(jWeather.text)
 #print(weather)
 
+location = (weather['SiteRep']['DV']['Location']['name'])
 feelLikeTemp = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['F'])
 #print("Feels Like: "+ feelLikeTemp +"°C")
 temp = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['T'])
@@ -98,17 +134,26 @@ precip = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['Pp'])
 #print("Precipitation Probablity: "+ precip + "%")
 weatherCode = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['W'])
 
+# Handle No Data errors
 if weatherCode ==  "NA":
-    weatherCode = "N/A"
-    observation = weatherCode
+    observation = "N/A"
 else:
     observation = weatherCodeDescs[int(weatherCode)]
 
-#print("Observation: " + observation)
-windspd = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['G'])
+# Remove day/night qualifiers from Observation text
+# Text not removed from list in case we want to add a picture later on
+for text in [" (day)", " (night)"]:
+    if observation.endswith(text):
+        observation = observation.replace(text, "")
+
+windspd = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['S'])
 winddir = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['D'])
+gust = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['G'])
 #testValues()
 
+#marsweather = maas.latest()
+#print(marsweather.max_temp + ": Max Mars Temperature")
+=======
 issAboveView = "http://www.heavens-above.com/orbitdisplay.aspx?icon=iss&width=300&height=300&mode=A&satid=25544"
 issGroundTrack = "http://www.heavens-above.com/orbitdisplay.aspx?icon=iss&width=1500&height=750&mode=M&satid=25544"
 
@@ -138,18 +183,15 @@ issGroundImg.save("../IMG/issGround.png")
 
 
 
-
 htmlFile = open("../DISPLAY.html", "w+")
-
-#writing the sunrise, moonrise, sunset and the moonset data to the html file
-#overwrite the file rather than append to it
 
 htmlFile.write(
 '''<!DOCTYPE html>
 <html>
   <head>
       <title>AD DISPLAY - KIELDER OBSERVATORY</title>
-      <link type="text/css" rel="stylesheet" href="CSS/displayStyle.css"/>
+      <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,700" rel="stylesheet">
+      <link type="text/css" rel="stylesheet" href="CSS/haydensStyle.css"/>
   </head>
 
   <body>
@@ -207,33 +249,37 @@ htmlFile.write(
       <!--End of Code for automatic slide show-->
 
       <div class="date">
-      Tonight: '''+datestr+'''
+      Tonight: <b>'''+datestr+'''</b> in <b>'''+str(location).title()+'''</b>
       </div>
 
       <div class="weatherDataTableDiv">
         <table class="weatherDataTable">
           <tr>
+            <th>Current Weather</th>
             <th>Temperature (Feels Like)</th>
-            <th>Wind Speed (Dir)</th>
+            <th>Wind Speed (Gust)</th>
+            <th>Wind Direction</th>
             <th>Precipitation Probability</th>
           </tr>
           <tr>
+            <!--Insert Current Observation here-->
+            <td>'''+str(observation)+'''</td>
             <!--Insert Feels Like Temp here-->
             <td>'''+str(temp)+''' &deg;C ('''+str(feelLikeTemp)+''' &deg;C)</td>
             <!--Insert Wind Info here-->
-            <td>'''+str(windspd)+''' mph ('''+str(winddir)+''')</td>
+            <td>'''+str(windspd)+''' mph ('''+str(gust)+''')</td>
+            <td>'''+str(winddir)+'''</td>
             <!--Insert Precipertaion Probability here-->
             <td>'''+str(precip)+'''&percnt;</td>
-            <!--Insert Current Observation here-->
-            <!--<td>Cloudy</td>-->
           </tr>
         </table>
       </div>
+      <!-- Add in div tag/table to showcase moon illumination info and
+      phase image-->
 
       <div class="weatherIconDiv">
         <img class="weatherIcon" src="IMG/PartlyCloudy.png">
      </div>
-
         <div class="astroTableDiv">
           <table class="astroTable">
             <tr>
