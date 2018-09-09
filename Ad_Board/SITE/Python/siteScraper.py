@@ -85,6 +85,11 @@ for c, line in enumerate(moonlist):
 		break
 moonlist.close()
 
+pnm = pnm.datetime().replace(tzinfo=pytz.utc)
+pnm = pnm.astimezone(tz=gb)
+LastNewMoonDate = str(pnm.date().day) + " " + str(pnm.date().month)
+lastNewMoonTime = pnm.strftime("%H:%M:%S %Z")
+
 
 #Sun values
 sunset = obs.next_setting(e.Sun())
@@ -277,39 +282,27 @@ htmlFile.write(
      Tonight: <b>'''+datestr+'''</b> in <b>'''+str(location).title()+'''</b>
      </div>
 
-       <div class="moonTableDiv">
-     <table class="moonTable">
-       <tr>
-         <th colspan="2">Last Full Moon</th>
-         <th colspan="2">Next New Moon</th>
-       </tr>
-       <tr>
-         <td>TimeFull</td>
-         <td rowspan="2">Moon Full Image</td>
-         <td>TimeNew</td>
-         <td rowspan="2">New Moon Image</td>
-       </tr>
-       <tr>
-         <td>DateFull</td>
-         <td>DateNew</td>
-       </tr>
-     </table>
-   </div>
-
-   <div class="currentMoonTableDiv">
-     <table class="currentMoonTable">
-       <tr>
-         <th colspan="2">Current Moon</th>
-       </tr>
-       <tr>
-         <td colspan="2">Current Moon Image</td>
-       </tr>
-       <tr>
-         <td>p% Lit</td>
-         <td>Phase</td>
-       </tr>
-     </table>
-   </div>
+        <div class="astroTableDiv">
+            <table class="astroTable">
+                <tr>
+                    <td colspan="2">Last New Moon</td>
+                    <td rowspan="3" ><img src="IMG/moonframes/'''+phase+'''" style="width:250px;height:250px;"></img></td>
+                    <td rowspan="2" style="font-size:90px"><b>'''+str(moonPhase)+'''%</b> lit</td>
+                    <td colspan="2">Next New Moon</td>
+                </tr>
+                <tr>
+                    <td>'''+str(LastNewMoonDate)+'''</td>
+                    <td rowspan="2">Last Full</td>
+                    <td>00 Sep</td>
+                    <td rowspan="2">Next New</td>
+                    </tr>
+                <tr>
+                    <td>'''+str(lastNewMoonTime)+'''</td>
+                    <td>Moon Phase</td>
+                    <td>00:00 GMT</td>
+                </tr>
+            </table>
+        </div>
 
         <div class="astroTableDiv">
           <table class="astroTable">

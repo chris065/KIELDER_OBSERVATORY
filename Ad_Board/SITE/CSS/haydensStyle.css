@@ -110,16 +110,6 @@ img
   font-size: 30px;
   float: left;
 }
-.currentMoonTableDiv
-{
-  text-align: center;
-  margin-top: 20px;
-  width: 100%;
-  font-family: Arial;
-  padding: 40px;
-  font-size: 30px;
-  float: left;
-}
 .weatherDataTableDiv
 {
   text-align: center;
