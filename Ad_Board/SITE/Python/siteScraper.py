@@ -277,6 +277,40 @@ htmlFile.write(
      Tonight: <b>'''+datestr+'''</b> in <b>'''+str(location).title()+'''</b>
      </div>
 
+       <div class="moonTableDiv">
+     <table class="moonTable">
+       <tr>
+         <th colspan="2">Last Full Moon</th>
+         <th colspan="2">Next New Moon</th>
+       </tr>
+       <tr>
+         <td>TimeFull</td>
+         <td rowspan="2">Moon Full Image</td>
+         <td>TimeNew</td>
+         <td rowspan="2">New Moon Image</td>
+       </tr>
+       <tr>
+         <td>DateFull</td>
+         <td>DateNew</td>
+       </tr>
+     </table>
+   </div>
+
+   <div class="currentMoonTableDiv">
+     <table class="currentMoonTable">
+       <tr>
+         <th colspan="2">Current Moon</th>
+       </tr>
+       <tr>
+         <td colspan="2">Current Moon Image</td>
+       </tr>
+       <tr>
+         <td>p% Lit</td>
+         <td>Phase</td>
+       </tr>
+     </table>
+   </div>
+
         <div class="astroTableDiv">
           <table class="astroTable">
             <tr>
