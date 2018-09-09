@@ -100,7 +100,7 @@ img
   font-size: 30px;
   float: left;
 }
-.lastMoonTableDiv
+.moonTableDivLast
 {
   text-align: center;
   margin-top: 20px;
@@ -109,13 +109,17 @@ img
   padding: 40px;
   font-size: 30px;
   float: left;
-
+}
+.currentMoonImg
+{
+  width: 30%;
+  margin-top: 640px;
+  margin-left: 180px;
 }
 .weatherDataTableDiv
 {
   text-align: center;
   margin-top: 40px;
-  width: 75%;
   font-family: Arial;
   padding: 40px;
   font-size: 30px;
@@ -135,9 +139,9 @@ table.astroTable
   margin-right: 10px;
   border-collapse: collapse;
 }
-table.lastMoonTable
+table.moonTableLast
 {
-  width: 100%;
+  width: 30%;
   margin-right: 10px;
   border-collapse: collapse;
 }
