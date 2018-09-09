@@ -12,7 +12,7 @@ body
 .logoIMG
 {
   width: 30%;
-  margin-top: 40px;
+  margin-top: -20px;
 }
 img
 {
@@ -100,7 +100,17 @@ img
   font-size: 30px;
   float: left;
 }
-.lastMoonTableDiv
+.moonTableDiv
+{
+  text-align: center;
+  margin-top: 20px;
+  width: 100%;
+  font-family: Arial;
+  padding: 40px;
+  font-size: 30px;
+  float: left;
+}
+.currentMoonTableDiv
 {
   text-align: center;
   margin-top: 20px;
@@ -109,17 +119,17 @@ img
   padding: 40px;
   font-size: 30px;
   float: left;
-
 }
 .weatherDataTableDiv
 {
   text-align: center;
   margin-top: 40px;
-  width: 75%;
   font-family: Arial;
   padding: 40px;
   font-size: 30px;
   float: left;
+  padding-right: 0;
+  width: 75%;
 }
 .weatherIcon
 {
@@ -135,7 +145,13 @@ table.astroTable
   margin-right: 10px;
   border-collapse: collapse;
 }
-table.lastMoonTable
+table.moonTable
+{
+  width: 100%;
+  margin-right: 10px;
+  border-collapse: collapse;
+}
+table.currentMoonTable
 {
   width: 100%;
   margin-right: 10px;
