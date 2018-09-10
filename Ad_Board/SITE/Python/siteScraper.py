@@ -15,6 +15,11 @@ from PIL import Image
 def takeSecond(elem):
     return elem[1]
 
+def getMonth(monthNo):
+    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    month = (months[int(monthNo-1)])
+    return month
+
 datestr = ""
 today = datetime.date.today()
 tomorrow = today + datetime.timedelta(days=1)
@@ -68,6 +73,9 @@ moonPhase = str(moonPhase)
 # Determine Lunation and pick out Phase Image from List
 nnm = e.next_new_moon(obs.date)
 pnm = e.previous_new_moon(obs.date)
+
+pfm = e.previous_full_moon(obs.date)
+
 lunation=(obs.date-pnm)/(nnm-pnm)
 
 if (lunation < 0.5):
@@ -85,10 +93,15 @@ for c, line in enumerate(moonlist):
 		break
 moonlist.close()
 
-pnm = pnm.datetime().replace(tzinfo=pytz.utc)
-pnm = pnm.astimezone(tz=gb)
-LastNewMoonDate = str(pnm.date().day) + " " + str(pnm.date().month)
-lastNewMoonTime = pnm.strftime("%H:%M:%S %Z")
+pfm = pfm.datetime().replace(tzinfo=pytz.utc)
+pfm = pfm.astimezone(tz=gb)
+lastFullMoonDate = str(pfm.date().day) + " " + str(getMonth(pfm.date().month))
+lastFullMoonTime = pfm.strftime("%H:%M:%S %Z")
+
+nnm = nnm.datetime().replace(tzinfo=pytz.utc)
+nnm = nnm.astimezone(tz=gb)
+nextNewMoonDate = str(nnm.date().day) + " " + str(getMonth(nnm.date().month))
+nextNewMoonTime = nnm.strftime("%H:%M:%S %Z")
 
 
 #Sun values
@@ -285,21 +298,21 @@ htmlFile.write(
         <div class="astroTableDiv">
             <table class="astroTable">
                 <tr>
-                    <td colspan="2">Last New Moon</td>
+                    <td colspan="2">Last Full Moon</td>
                     <td rowspan="3" ><img src="IMG/moonframes/'''+phase+'''" style="width:250px;height:250px;"></img></td>
                     <td rowspan="2" style="font-size:90px"><b>'''+str(moonPhase)+'''%</b> lit</td>
                     <td colspan="2">Next New Moon</td>
                 </tr>
                 <tr>
-                    <td>'''+str(LastNewMoonDate)+'''</td>
+                    <td>'''+str(lastFullMoonDate)+'''</td>
                     <td rowspan="2">Last Full</td>
-                    <td>00 Sep</td>
+                    <td>'''+str(nextNewMoonDate)+'''</td>
                     <td rowspan="2">Next New</td>
                     </tr>
                 <tr>
-                    <td>'''+str(lastNewMoonTime)+'''</td>
+                    <td>'''+str(lastFullMoonTime)+'''</td>
                     <td>Moon Phase</td>
-                    <td>00:00 GMT</td>
+                    <td>'''+str(nextNewMoonTime)+'''</td>
                 </tr>
             </table>
         </div>
