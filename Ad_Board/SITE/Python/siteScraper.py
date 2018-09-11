@@ -11,6 +11,8 @@ import json, requests
 import urllib
 from PIL import Image
 
+currentWeatherPeriod = 0
+
 # Key definition for moonrise/set table
 def takeSecond(elem):
     return elem[1]
@@ -143,30 +145,24 @@ jWeather = requests.get(weatherDataUrl)
 weather = json.loads(jWeather.text)
 #print(weather)
 
+#Get the current weather period by looping through all of the data in the Rep section
+for period in (weather['SiteRep']['DV']['Location']['Period'][0]['Rep']):
+    currentWeatherPeriod = currentWeatherPeriod + 1
+currentWeatherPeriod = int(currentWeatherPeriod-1)
+
 location = (weather['SiteRep']['DV']['Location']['name'])
-feelLikeTemp = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['F'])
+feelLikeTemp = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][currentWeatherPeriod]['F'])
 #print("Feels Like: "+ feelLikeTemp +"°C")
-temp = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['T'])
+temp = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][currentWeatherPeriod]['T'])
 #print("Actual Temp: "+ temp +"°C")
-precip = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['Pp'])
+precip = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][currentWeatherPeriod]['Pp'])
 #print("Precipitation Probablity: "+ precip + "%")
-weatherCode = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['W'])
+weatherCode = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][currentWeatherPeriod]['W'])
 
-# Handle No Data errors
-if weatherCode ==  "NA":
-    observation = "N/A"
-else:
-    observation = weatherCodeDescs[int(weatherCode)]
 
-# Remove day/night qualifiers from Observation text
-# Text not removed from list in case we want to add a picture later on
-for text in [" (day)", " (night)"]:
-    if observation.endswith(text):
-        observation = observation.replace(text, "")
-
-windspd = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['S'])
-winddir = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['D'])
-gust = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['G'])
+windspd = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][currentWeatherPeriod]['S'])
+winddir = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][currentWeatherPeriod]['D'])
+gust = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][currentWeatherPeriod]['G'])
 #testValues()
 
 #marsweather = maas.latest()
