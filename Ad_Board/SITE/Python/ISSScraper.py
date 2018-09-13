@@ -1,6 +1,6 @@
-#!/usr/bin/python3.7
+#!/usr/bin/python3
 # coding=utf8
-import urllib
+import urllib3, certifi
 import datetime
 import csv
 from bs4 import BeautifulSoup
@@ -8,17 +8,18 @@ from html_table_extractor.extractor import Extractor
 
 today = datetime.date.today()
 
+http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED',ca_certs=certifi.where())
+
 issPassUrl = "https://heavens-above.com/PassSummary.aspx?satid=25544&lat=55.2323&lng=-2.616&loc=Kielder&alt=378&tz=GMT"
-#issPassUrl = open("ISSVisiblePasses.html", "r")
-issSoup = BeautifulSoup(urllib.request.urlopen(issPassUrl).read(), "html.parser")
-#issSoup = BeautifulSoup(issPassUrl.read(), "html.parser")
+issPage = http.request('GET', issPassUrl)
+issSoup = BeautifulSoup(issPage.data.decode('utf-8'), "html.parser")
 
 passes=issSoup.find("table","standardTable")
 passes = str(passes).replace("><", ">\n<") # Separate table elements into new lines for Extractor
 extractor = Extractor(passes)
 extractor.parse()
 extractor.write_to_csv(path='.')
-#issPassUrl.close()
+
 # Python CSV tutorial at https://realpython.com/python-csv/
 with open('output.csv', newline='', encoding='utf-8') as f:
     reader = csv.reader(f)

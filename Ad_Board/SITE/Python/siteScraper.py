@@ -2,6 +2,7 @@ import ephem as e
 import datetime
 import pytz
 import json, requests, urllib
+from io import BytesIO
 #from nasa import maas
 from bs4 import BeautifulSoup
 #from html_table_extractor.extractor import Extractor
@@ -16,11 +17,6 @@ currentWeatherPeriod = 0
 # Key definition for moonrise/set table
 def takeSecond(elem):
     return elem[1]
-
-def getMonth(monthNo):
-    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-    month = (months[int(monthNo-1)])
-    return month
 
 datestr = ""
 today = datetime.date.today()
@@ -75,7 +71,7 @@ moonPhase = str(moonPhase)
 # Determine Lunation and pick out Phase Image from List
 nnm = e.next_new_moon(obs.date)
 pnm = e.previous_new_moon(obs.date)
-
+nfm = e.next_full_moon(obs.date)
 pfm = e.previous_full_moon(obs.date)
 
 lunation=(obs.date-pnm)/(nnm-pnm)
@@ -97,12 +93,12 @@ moonlist.close()
 
 pfm = pfm.datetime().replace(tzinfo=pytz.utc)
 pfm = pfm.astimezone(tz=gb)
-lastFullMoonDate = str(pfm.date().day) + " " + str(getMonth(pfm.date().month))
+lastFullMoonDate = pfm.strftime("%d %b")
 lastFullMoonTime = pfm.strftime("%H:%M:%S %Z")
 
 nnm = nnm.datetime().replace(tzinfo=pytz.utc)
 nnm = nnm.astimezone(tz=gb)
-nextNewMoonDate = str(nnm.date().day) + " " + str(getMonth(nnm.date().month))
+nextNewMoonDate = nnm.strftime("%d %b")
 nextNewMoonTime = nnm.strftime("%H:%M:%S %Z")
 
 
@@ -170,8 +166,9 @@ gust = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][currentWeatherP
 issAboveView = "http://www.heavens-above.com/orbitdisplay.aspx?icon=iss&width=300&height=300&mode=A&satid=25544"
 issGroundTrack = "http://www.heavens-above.com/orbitdisplay.aspx?icon=iss&width=1500&height=750&mode=M&satid=25544"
 
-issAboveImg = urllib.request.urlretrieve(issAboveView, "../IMG/issAbove.png")
-issAboveImg = Image.open("../IMG/issAbove.png")
+#issAboveImg = urllib.request.urlretrieve(issAboveView, "../IMG/issAbove.png")
+i = requests.get(issAboveView)
+issAboveImg = Image.open(BytesIO(i.content))
 
 #Mask out the water mark for the above view
 issCreditMaskAbove = 107, 8
@@ -182,8 +179,8 @@ issAboveImg.paste(issCreditMaskAbove, issCreditMarkAbove)
 issAboveImg.save("../IMG/issAbove.png")
 #end of mask code for above view
 
-issGroundImg = urllib.request.urlretrieve(issGroundTrack, "../IMG/issGround.png")
-issGroundImg = Image.open("../IMG/issGround.png")
+i = requests.get(issGroundTrack)
+issGroundImg = Image.open(BytesIO(i.content))
 
 #Mask out the water mark for the ground view
 issCreditMaskGround = 107, 8
