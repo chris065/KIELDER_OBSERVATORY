@@ -1,18 +1,22 @@
 #!/usr/bin/python3
 # coding=utf8
-import urllib3, certifi
+import urllib3, certifi, requests
 import datetime
 import csv
 from bs4 import BeautifulSoup
+from PIL import Image
+from io import BytesIO
 from html_table_extractor.extractor import Extractor
 
 today = datetime.date.today()
 
 http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED',ca_certs=certifi.where())
+print('Pool Manager Established')
 
 issPassUrl = "https://heavens-above.com/PassSummary.aspx?satid=25544&lat=55.2323&lng=-2.616&loc=Kielder&alt=378&tz=GMT"
 issPage = http.request('GET', issPassUrl)
 issSoup = BeautifulSoup(issPage.data.decode('utf-8'), "html.parser")
+print('ISS Page Downloaded')
 
 passes = issSoup.find("table","standardTable")
 passes = str(passes).replace("><", ">\n<") # Separate table elements into new lines for Extractor
@@ -20,13 +24,10 @@ extractor = Extractor(passes)
 extractor.parse()
 extractor.write_to_csv(path='.')
 
-links = issSoup.find_all("tr","clickableRow")
-urls = []
-for i in range(len(links)):
-    link = links[i].find("a").get('href')
-    urls.append(link)
-print(urls)
+print('CSV Written')
 
+links = issSoup.find_all("tr","clickableRow")
+print(links[0])
 # Python CSV tutorial at https://realpython.com/python-csv/
 with open('output.csv', newline='', encoding='utf-8') as f:
     reader = csv.reader(f)
@@ -63,6 +64,7 @@ with open('output.csv', newline='', encoding='utf-8') as f:
             # Heavens Above Table parsed, perform calculations for display
             dur = entry[8] - entry[2]
             entry.append(dur)
+            # Generate Description for TweetBot
             desc = ""
             if entry[1] < -2.8:
                 desc = desc + "bright, "
@@ -94,6 +96,20 @@ with open('output.csv', newline='', encoding='utf-8') as f:
             desc = desc + "after " + str(dur)[3:] + "."
 
             passlist.append(desc)
+
+            # Download and Save Image pertaining to pass
+            link = links[line-2].find("a").get('href')
+            print('https://www.heavens-above.com/'+str(link))
+            passMap = http.request('GET', 'https://www.heavens-above.com/'+link)
+            passMapSoup = BeautifulSoup(passMap.data.decode('utf-8'), "html.parser")
+            mapPageLink = passMapSoup.find(id="ctl00_cph1_imgViewFinder").get('src')
+            print(mapPageLink)
+            mapPage = http.request('GET', 'https://www.heavens-above.com/'+mapPageLink)
+            mapImg = Image.open(BytesIO(mapPage.data))
+            fileName = 'ISSMaps/map'+entry[2].strftime("%m%d_%H%M%S")+'.png'
+            mapImg.save(fileName)
+            entry.append(fileName)
             print(entry[2].strftime("%d %b - %H:%M:%S  --  "), desc)
-            entry.append(urls[line])
+            #print(entry)
+
             line += 1
