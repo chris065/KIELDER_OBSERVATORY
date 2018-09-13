@@ -21,6 +21,7 @@ from astropy.time import Time
 from bs4 import BeautifulSoup
 import urllib
 import requests
+import json
 
 # NASA APOD API and enviromental variable for API key:
 from datetime import date
@@ -40,7 +41,6 @@ from subprocess import run
 darkStyleSheet = ""
 lightStyleSheet = ""
 styleSheet = ""
-apodTitle = ""
 
 kobs = e.Observer()
 kobs.lon, kobs.lat = '-2.5881', '55.2330'
@@ -87,6 +87,10 @@ apodUrl = str(astroPod.url)
 apodUrl2 = "https://api.nasa.gov/planetary/apod?api_key=" + "VSeA2cMgNPtUslwyxj1cSGztgo8ZLJhUkGyA2IZ1"
 apodUrl3 = "https://apod.nasa.gov/apod/ap"+apodDay.strftime('%y%m%d')+".html"
 
+# NASA API returns a JSON object, read contents into memory
+jApod = requests.get(apodUrl2)
+aPod = json.loads(jApod.text)
+
 testsoup = BeautifulSoup(urllib.request.urlopen(apodUrl3).read(), "html.parser")
 yturl = ""
 iframe = ""
@@ -109,17 +113,12 @@ else: # APOD is image, fetch
     apodImage.save("NASA_APOD.jpg")
 
 # Get explanatory text for NASA APOD website:
-apodExplanation = str(astroPod.explanation)
+apodTitle = aPod['title']
+apodExplanation = aPod['explanation']
 
-# Get credits for NASA APOD website:
-soup = BeautifulSoup(urllib.request.urlopen(apodUrl2).read(), "html.parser")
-# Strip out HTML tags in source code:
-apodText = str(soup.getText())
-# Strip off preceding text before copywrite name:
-apodText = apodText[18:]
-index = apodText.find('"')
 # Strip off following text after copywrite name:
-apodCredit = apodText[:index]
+apodCredit = aPod['copyright']
+print(apodCredit)
 
 # Save Data for Future Use
 ex = open("explanation.txt", "w+")
