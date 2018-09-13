@@ -19,9 +19,7 @@ from astropy.time import Time
 
 # Parsing information and images from HTML websites:
 from bs4 import BeautifulSoup
-import urllib
-import requests
-import json
+import urllib3, requests, json
 
 # NASA APOD API and enviromental variable for API key:
 from datetime import date
@@ -35,7 +33,6 @@ import string
 
 # Setting environment variables and/or deleting files:
 import os
-import sys
 from subprocess import run
 
 darkStyleSheet = ""

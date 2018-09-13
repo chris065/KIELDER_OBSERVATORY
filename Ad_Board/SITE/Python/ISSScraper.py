@@ -14,11 +14,18 @@ issPassUrl = "https://heavens-above.com/PassSummary.aspx?satid=25544&lat=55.2323
 issPage = http.request('GET', issPassUrl)
 issSoup = BeautifulSoup(issPage.data.decode('utf-8'), "html.parser")
 
-passes=issSoup.find("table","standardTable")
+passes = issSoup.find("table","standardTable")
 passes = str(passes).replace("><", ">\n<") # Separate table elements into new lines for Extractor
 extractor = Extractor(passes)
 extractor.parse()
 extractor.write_to_csv(path='.')
+
+links = issSoup.find_all("tr","clickableRow")
+urls = []
+for i in range(len(links)):
+    link = links[i].find("a").get('href')
+    urls.append(link)
+print(urls)
 
 # Python CSV tutorial at https://realpython.com/python-csv/
 with open('output.csv', newline='', encoding='utf-8') as f:
@@ -88,5 +95,5 @@ with open('output.csv', newline='', encoding='utf-8') as f:
 
             passlist.append(desc)
             print(entry[2].strftime("%d %b - %H:%M:%S  --  "), desc)
-#            print(entry)
+            entry.append(urls[line])
             line += 1
