@@ -1,0 +1,76 @@
+body
+{
+  background-color: black;
+  margin: 0;
+}
+.blockOne
+{
+  width: 100%;
+}
+
+.blockOne img
+{
+  max-width: 100%;
+}
+.blockTwo
+{
+  color: white;
+  font-family: Arial;
+  width: 100%;
+  margin-top: 20px;
+}
+#kLogo
+{
+  position: fixed;
+  width: 20%;
+  top: 30px;
+  left: 20px;
+}
+#text
+{
+  position: fixed;
+  top: 600px;
+  left: 245px;
+  font-size: 40px;
+  color: white;
+  font-family: arial;
+  text-align: center;
+}
+#title
+{
+  padding: 40px;
+  color: white;
+  font-size: 50px;
+  float: left;
+  margin-left: 40px;
+}
+#weatherIcon
+{
+  width: 20%;
+  float: right;
+  padding: 40px;
+  margin-top: 10px;
+  margin-right: 40px;
+}
+.weatherTable
+{
+  font-family: arial;
+  border-collapse: collapse;
+  text-align: center;
+  font-size: 30px;
+  margin-top: 50px;
+  float: left;
+  padding: 40px;
+  width: 100%;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+td, th
+{
+  border: white solid 5px;
+  border-top: none;
+}
+td
+{
+  border-bottom: none;
+}

@@ -40,14 +40,6 @@ temp = ""
 precip = ""
 #The condition code that will corespond to the correct description
 weatherCode = ""
-#The condition code will map to one of these values
-weatherCodeDescs = ["Clear night", "Sunny day", "Partly cloudy (night)", "Partly cloudy (day)", "Not used", "Mist", "Fog", "Cloudy", "Overcast", "Light rain shower (night)",
-                    "Light rain shower (day)", "Drizzle", "Light rain", "Heavy rain shower (night)", "Heavy rain shower (day)", "Heavy rain", "Sleet shower (night)", "Sleet shower (day)",
-                    "Sleet", "Hail shower (night)", "Hail shower (day)", "Hail", "Light snow shower (night)", "Light snow shower (day)", "Light snow", "Heavy snow shower (night)", "Heavy snow shower (day)",
-                    "Heavy snow", "Thunder shower (night)", "Thunder shower (day)", "Thunder"]
-#once the condition code has been mapped to the description it
-#will be stored in this variable
-observation = ""
 
 #making the BST timezone object
 gb = pytz.timezone('Europe/London')
@@ -140,11 +132,6 @@ weatherDataUrl = "http://datapoint.metoffice.gov.uk/public/data/val/wxfcs/all/js
 jWeather = requests.get(weatherDataUrl)
 weather = json.loads(jWeather.text)
 #print(weather)
-
-#Get the current weather period by looping through all of the data in the Rep section
-for period in (weather['SiteRep']['DV']['Location']['Period'][0]['Rep']):
-    currentWeatherPeriod = currentWeatherPeriod + 1
-currentWeatherPeriod = int(currentWeatherPeriod-1)
 
 location = (weather['SiteRep']['DV']['Location']['name'])
 feelLikeTemp = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][currentWeatherPeriod]['F'])
