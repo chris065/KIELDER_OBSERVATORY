@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-
 #############################################
 # PYTHON SCRIPT TO WEB SCRAPE IMAGES AND
 # DATA FROM VARIOUS WEBSITES
@@ -19,7 +18,7 @@ from astropy.time import Time
 
 # Parsing information and images from HTML websites:
 from bs4 import BeautifulSoup
-import urllib3, requests, json
+import urllib3, certifi, requests, json
 
 # NASA APOD API and enviromental variable for API key:
 from datetime import date
@@ -27,6 +26,7 @@ from nasa import apod as nasaApod
 
 # Manipulating (crop, resize, save etc.) images:
 from PIL import Image
+from io import BytesIO
 
 # Manipulating strings:
 import string
@@ -84,11 +84,14 @@ apodUrl = str(astroPod.url)
 apodUrl2 = "https://api.nasa.gov/planetary/apod?api_key=" + "VSeA2cMgNPtUslwyxj1cSGztgo8ZLJhUkGyA2IZ1"
 apodUrl3 = "https://apod.nasa.gov/apod/ap"+apodDay.strftime('%y%m%d')+".html"
 
+http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED',ca_certs=certifi.where())
+
 # NASA API returns a JSON object, read contents into memory
 jApod = requests.get(apodUrl2)
 aPod = json.loads(jApod.text)
 
-testsoup = BeautifulSoup(urllib.request.urlopen(apodUrl3).read(), "html.parser")
+apodPage = http.request('GET', apodUrl3)
+testsoup = BeautifulSoup(apodPage.data.decode('utf-8'), "html.parser")
 yturl = ""
 iframe = ""
 
@@ -99,37 +102,30 @@ if (str(testsoup.iframe) != 'None'):
         run("youtube-dl -F https://youtube.com/watch?v="+yturl+" | grep mp4 | grep video | tail -n 1 > ytinfo.txt", shell=True)
         with open("ytinfo.txt", "r") as f:
             qual = f.read().split("mp4")[0].strip()
-        print(qual)
         run("youtube-dl -f "+qual+" https://youtube.com/watch?v="+yturl+"", shell=True)
         run("mv *.mp4 APODVideo.mp4", shell=True)
     else: # Other interactive frame. Embed directly.
         iframe = str(testsoup.iframe)
 else: # APOD is image, fetch
-    apodImage = urllib.request.urlretrieve(apodUrl, "NASA_APOD.jpg")
-    apodImage = Image.open("NASA_APOD.jpg")
+    i = requests.get(aPod['hdurl'])
+    apodImage = Image.open(BytesIO(i.content))
+    #print(Image.format(apodImage))
     apodImage.save("NASA_APOD.jpg")
 
 # Get explanatory text for NASA APOD website:
 apodTitle = aPod['title']
 apodExplanation = aPod['explanation']
-
-# Strip off following text after copywrite name:
 apodCredit = aPod['copyright']
-print(apodCredit)
 
 # Save Data for Future Use
-ex = open("explanation.txt", "w+")
-ex.write(apodExplanation)
-ex.close()
+with open("explanation.txt", "w+") as ex:
+    ex.write(apodExplanation)
 
-ti = open("title.txt", "w+")
-ti.write(apodTitle)
-ti.close()
+with open("title.txt", "w+") as ti:
+    ti.write(apodTitle)
 
-cr = open("credit.txt", "w+")
-cr.write(apodCredit)
-#print(apodCredit)
-cr.close()
+with open("credit.txt", "w+") as cr:
+    cr.write(apodCredit)
 
 #############################################
 # Write data to HTML file:
@@ -145,6 +141,9 @@ elif iframe != "":
     frame = iframe
 else:
     frame = '''<img style = "max-height: 650px; max-width: 1840px;" src = "APOD_INFO_TEST/NASA_APOD.jpg">'''
+
+with open("frame.txt", "w") as fr:
+    fr.write(frame)
 
 # Write HTML href text to first line of new text HTML file:
 apodHtml = '''<!DOCTYPE html>
