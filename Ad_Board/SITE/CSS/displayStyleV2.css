@@ -19,6 +19,10 @@ body
   width: 100%;
   margin-top: 20px;
 }
+.blockThree
+{
+  color: white;
+}
 #kLogo
 {
   position: fixed;
@@ -29,7 +33,7 @@ body
 #text
 {
   position: fixed;
-  top: 600px;
+  top: 580px;
   left: 245px;
   font-size: 40px;
   color: white;
@@ -43,6 +47,7 @@ body
   font-size: 50px;
   float: left;
   margin-left: 40px;
+  margin-top: 20px;
 }
 #weatherIcon
 {
@@ -52,20 +57,47 @@ body
   margin-top: 10px;
   margin-right: 40px;
 }
-.weatherTable
+#weatherTable
 {
-  font-family: arial;
-  border-collapse: collapse;
-  text-align: center;
-  font-size: 30px;
-  margin-top: 50px;
   float: left;
   padding: 40px;
   width: 100%;
-  margin-left: 20px;
-  margin-right: 20px;
+  font-size: 25px;
+  font-family: Arial;
+  margin-top: 30px;
+  text-align: center;
 }
-td, th
+#astroDataTable
+{
+  float: left;
+  padding: 40px;
+  width: 100%;
+  font-size: 25px;
+  font-family: Arial;
+  margin-top: 30px;
+  text-align: center;
+}
+#eventTable
+{
+  float: left;
+  padding: 40px;
+  width: 100%;
+  font-size: 25px;
+  font-family: Arial;
+  margin-top:160px;
+  text-align: center;
+  border-collapse: collapse;
+}
+#eventTable th, td
+{
+  border-left: none;
+  border-right: none;
+}
+#head tr
+{
+  border-right: white solid 5px;
+}
+th, td
 {
   border: white solid 5px;
   border-top: none;
