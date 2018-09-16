@@ -6,20 +6,56 @@
   </head>
 
   <body>
+
       <div class="blockOne">
 
-        <img id="kLogo" src="IMG/blockOneImgs/ObsLogo_NoBG.png">
         <!--Imgs and divs for the slide show-->
 
-        <img src="IMG/blockOneImgs/2019 Calendar/Dan M MILKY WAY 2.jpg">
+        <div class="slideShowContainer">
+
+          <div class="slide fade">
+            <img src="IMG/blockOneImgs/Dan M MILKY WAY 2.jpg">
+          </div>
+
+          <div class="slide fade">
+            <img src="IMG/blockOneImgs/Dan M MILKY WAY 2.jpg">
+          </div>
+
+          <div class="slide fade">
+            <img src="IMG/blockOneImgs/Dan M MILKY WAY 2.jpg">
+          </div>
+
+        </div>
+        <img id="kLogo" src="IMG/blockOneImgs/ObsLogo_NoBG.png">
+        <script>
+        var slideIndex = 0;
+        showSlides();
+
+        function showSlides()
+        {
+          var i;
+          var slides = document.getElementsByClassName("slide");
+          for (i = 0; i < slides.length; i++)
+          {
+            slides[i].style.display = "none";
+          }
+          slideIndex++;
+          if (slideIndex > slides.length)
+          {
+            slideIndex = 1
+          }
+          slides[slideIndex-1].style.display = "block";
+          setTimeout(showSlides, 3000); //Show image for 5 seconds
+        }
+        </script>
 
         <!--End of imgs and divs for the slide show-->
         <p id="text">Stargazing heaven all year round!</p>
       </div>
 
       <div class="blockTwo">
-        <div class="weather">
-          <p id="title">Current weather <br/> in Kielder</p>
+        <div class="weather tables fade">
+          <p class="title">Current weather <br/> in Kielder</p>
           <img id="weatherIcon" src="IMG/metofficeicons/metimg10.svg"/>
 
 
@@ -53,7 +89,49 @@
             </tr>
           </table>
         </div>
+
+        <div class="moon tables fade">
+          <p class="title">Tonights Moon</p>
+          <img id="moonImage" src="IMG/moonframes/newimage00889.jpg"/>
+
+          <p class="moonData">% Illuminated / Moon Phase name
+            <br/><br/>
+            Set "Time" from sun
+          </p>
+        </div>
+
+      <div class="ISS tables fade">
+        <img id="issGround" src="IMG/issGround.png">
+
+        <p class="moonData">% Illuminated / Moon Phase name
+
+          <br/><br/>
+          Set "Time" from sun
+        </p>
       </div>
+    </div>
+
+      <script>
+      var tableIndex = 0;
+      showTables();
+
+      function showTables()
+      {
+        var i;
+        var tables = document.getElementsByClassName("tables");
+        for (i = 0; i < tables.length; i++)
+        {
+          tables[i].style.display = "none";
+        }
+        tableIndex++;
+        if (tableIndex > tables.length)
+        {
+          tableIndex = 1
+        }
+        tables[tableIndex-1].style.display = "block";
+        setTimeout(showTables, 5000); //Show data for 5 seconds
+      }
+      </script>
 
       <div class="blockThree">
 
