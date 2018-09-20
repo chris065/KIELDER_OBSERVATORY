@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 
 #############################################
@@ -12,26 +12,18 @@
 #############################################
 
 # Current system times:
-from datetime import datetime
+import datetime
 import ephem as e
 
-# Julian dates:
-from astropy.time import Time
-
-# Parsing information and images from HTML websites:
+# Parsing information and images from web:
 from bs4 import BeautifulSoup
-import urllib
+import urllib3, certifi
 import requests
+import json
 
 # Manipulating (crop, resize, save etc.) images:
+from io import BytesIO
 from PIL import Image
-
-# Manipulating strings:
-import string
-
-darkStyleSheet = ""
-lightStyleSheet = ""
-styleSheet = ""
 
 
 #############################################
@@ -42,7 +34,7 @@ styleSheet = ""
 #Checks whether the sun is below the horizon or not
 kobs = e.Observer()
 kobs.lon, kobs.lat = '-2.5881', '55.2330'
-kobs.date = datetime.now()
+kobs.date = datetime.datetime.now()
 
 #Compute Sun Altitude
 sol = e.Sun()
@@ -51,24 +43,30 @@ sol.compute(kobs)
 # Return First digit of Sun's altitude
 alt = int(str(sol.alt).split(':')[0])
 
-if (alt < -6):
+styleSheet = ""
+if (alt <= -6):
     #read the contents of the dark style sheet for night time
-    darkStyleSheet = open("Aurora_Style_Dark.css", "r").read()
-    styleSheet = darkStyleSheet
+    styleSheet = open("Aurora_Style_Dark.css", "r").read()
 else:
     #read the contents of the light for day time style sheet
-    lightStyleSheet = open("Aurora_Style_Light.css", "r").read()
-    styleSheet = lightStyleSheet
+    styleSheet = open("Aurora_Style_Light.css", "r").read()
 #End of checking whether or not the sun is below the horizon
 
 # Needs updating every 5 minutes
 
-# Create URL for auroral data (with Europe-centric loation):
-auroraUrl = "http://services.swpc.noaa.gov/images/aurora-forecast-northern-hemisphere.jpg"
+http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED',ca_certs=certifi.where())
+
+# URLs to retrieve data from
+auroraUrl = "https://services.swpc.noaa.gov/images/aurora-forecast-northern-hemisphere.jpg"
+geoMagUrl = "https://services.swpc.noaa.gov/products/solar-wind/mag-5-minute.json"
+plasmaUrl = "https://services.swpc.noaa.gov/products/solar-wind/plasma-5-minute.json"
+solIndicesUrl = "https://services.swpc.noaa.gov/text/daily-solar-indices.txt"
+kIndexUrl = "https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json"
 
 # Get auroral oval image:
-spaceWeatherImage = urllib.request.urlretrieve(auroraUrl, "Aurora_Map.png")
-spaceWeatherImage = Image.open("Aurora_Map.png")
+i = requests.get(auroraUrl)
+spaceWeatherImage = Image.open(BytesIO(i.content))
+#spaceWeatherImage = spaceWeatherImage.save("Aurora_Map.png")
 
 # Resize image:
 spaceWeatherSize = 750, 750
@@ -77,75 +75,65 @@ spaceWeatherImage = spaceWeatherImage.resize(spaceWeatherSize, Image.ANTIALIAS)
 # Save revised image:
 spaceWeatherImage.save("IMG/Aurora_Map.png")
 
-# Create URL for space weather data:
-spaceWeatherUrl = "http://www.spaceweather.com/"
+# Parse JSON files from SWPC
+geoMagJSON = json.loads(requests.get(geoMagUrl).text)
+plasmaJSON = json.loads(requests.get(plasmaUrl).text)
+kJSON = json.loads(requests.get(kIndexUrl).text)
 
-# Get data from various Space Weather website tables:
-soup = BeautifulSoup(urllib.request.urlopen(spaceWeatherUrl).read(), "html.parser")
-ranProperly = True
+with open("solardata.txt","w") as f:
+    f.write(http.request('GET', solIndicesUrl).data.decode('utf-8'))
 
-# Get solar wind, sunspot and magnetic field data:
-sunData = soup.findAll('b')
+with open("solardata.txt", "r") as f:
+    solIndText = f.readlines()[-1].split("    ")
 
 # Get solar wind data:
-solarWindSpeed = str(sunData[1])
-solarWindSpeed = ''.join([n for n in solarWindSpeed if n in '1234567890.'])
-solarWindDensity = str(sunData[2])
-solarWindDensity = ''.join([n for n in solarWindDensity if n in '1234567890.'])
+solarWindSpeed = plasmaJSON[len(plasmaJSON)-1][2]
+solarWindDensity = plasmaJSON[len(plasmaJSON)-1][1]
 
 # Get sunspot data:
-sunSpotNumber = str(sunData[6])
-sunSpotNumber = ''.join([n for n in sunSpotNumber if n in '1234567890.'])
+sunSpotNumber = solIndText[1].strip()
 
 # Get magnetic field data:
-bTotal = str(sunData[11])
-bTotal = ''.join([n for n in bTotal if n in '1234567890.'])
-bZ = str(sunData[12])
-bZ = ''.join([n for n in bZ if n in '1234567890.'])
-bDirection = str(sunData[13])
-bDirection.replace('<b>', '')
-bDirection.replace('\n', '')
-bDirection.replace('</b>', '')
-# Ensure text has capital letters:
-if 'north' in bDirection:
-  bDirection = ' North'
-  bColour = '<font color = "green">'
-if 'south' in bDirection:
-  bDirection = ' South'
-  bColour = '<font color = "red">'
+bTotal = float(geoMagJSON[len(geoMagJSON)-1][6])
+bZ = float(geoMagJSON[len(geoMagJSON)-1][3])
+print(bTotal, bZ)
+#bDirection = str(sunData[13])
+if bZ == 0.0:
+    bDirection = ""
+    bColour = "green"
+elif bZ > 0.0:
+    bDirection = "North"
+    bColour = "green"
+else:
+    bDirection = "South"
+    bColour = "red"
 
 # Get Kp index data:
-kIndexData = soup.findAll('strong')
 
 # Get current planetary index data:
-kNow = str(kIndexData[1])
-kNow = ''.join([n for n in kNow if n in '1234567890.'])
+kNow = int(kJSON[len(kJSON)-1][1])
+# Get Observed 24hr maximum planetary index data:
+kMax = kNow
+for i in range(1,8):
+    histK = int(kJSON[len(kJSON) - i][1])
+    if histK > kMax:
+        kMax = histK
 
-# Get predicted 24hr maximum planetary index data:
-kMax = str(kIndexData[2])
-kMax = ''.join([n for n in kMax if n in '1234567890.'])
+kColours = []
 
-# Specify present conditions:
-if kNow == '0' or '1' or '2':
-  kNowDescription = ' (Quiet)'
-  kNowColour = '<font color = "green">'
-elif kNow == '3' or '4':
-  kNowDescription = ' (Unsettled)'
-  kNowColour = '<font color = "orange">'
-else:
-  kNowDescription = ' (Storm)'
-  kNowColour = '<font color = "red">'
-
-# Specify predicted conditions:
-if kMax == '0' or '1' or '2':
-  kMaxDescription = ' (Quiet)'
-  kMaxColour = '<font color = "green">'
-elif kMax == '3' or '4':
-  kMaxDescription = ' (Unsettled)'
-  kMaxColour = '<font color = "orange">'
-else:
-  kMaxDescription = ' (Storm)'
-  kMaxColour = '<font color = "red">'
+for i in [kNow, kMax]:
+    if i >= 5:
+        if i >=8:
+            kColours.append('Severe')
+        else:
+            kColours.append('Storm')
+        kColours.append('red')
+    elif i >= 4:
+        kColours.append('Unsettled')
+        kColours.append('orange')
+    else:
+        kColours.append('Quiet')
+        kColours.append('green')
 
 
 #############################################
@@ -206,19 +194,19 @@ The Aurora Now
 	</tr>
 	<tr>
 		<td id="td02">B<sub>total</sub> (nano Tesla)</td>
-		<td id="td02"><i>''' + bTotal + '''</i></td>
+		<td id="td02"><i>''' + str(bTotal) + '''</i></td>
 	</tr>
 	<tr>
 		<td id="td01">B<sub>z</sub> (nano Tesla)</td>
-		<td id="td01"><i>''' + bZ + bColour + bDirection + '''</font></i></td>
+		<td id="td01"><i>''' + str(bZ) + ''' <font color = "'''+ bColour +'''"> ''' + bDirection + '''</font></i></td>
 	</tr>
 	<tr>
 		<td id="td02">K-Index Now (0-9)</td>
-		<td id="td02"><i>''' + kNow + kNowColour + kNowDescription + '''</font></i></td>
+		<td id="td02"><i>''' + str(kNow) + ''' <font color = "'''+ kColours[1] +'''"> ''' + kColours[0] + '''</font></i></td>
 	</tr>
 	<tr>
 		<td id="td01">24hr Maximum K-Index (0-9)</td>
-		<td id="td01"><i>''' + kMax + kMaxColour + kMaxDescription + '''</font></i></td>
+		<td id="td01"><i>''' + str(kMax) + ''' <font color = "'''+ kColours[3] +'''"> ''' + kColours[2] + '''</font></i></td>
 	</tr>
 </table>
 

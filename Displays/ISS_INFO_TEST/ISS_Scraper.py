@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 
 #############################################
@@ -12,26 +12,20 @@
 #############################################
 
 # Current system times:
-from datetime import date
-# Parsing information and images from HTML websites:
-#from urllib import urllib.request.urlopen
-import urllib
+import datetime
+import ephem as e
+
+# Parsing information and images from web:
+import urllib3
 import requests
 
 # Manipulating (crop, resize, save etc.) images:
+from io import BytesIO
 from PIL import Image
-
-# Manipulating strings:
-import string
 
 # Setting environment variables and/or deleting files:
 import os
 
-import datetime
-import ephem as e
-
-darkStyleSheet = ""
-lightStyleSheet = ""
 styleSheet = ""
 
 kobs = e.Observer()
@@ -45,15 +39,12 @@ sol.compute(kobs)
 # Return First digit of Sun's altitude
 alt = int(str(sol.alt).split(':')[0])
 
-if (alt < -6):
+if (alt <= -6):
     #read the contents of the dark style sheet for night time
-    darkStyleSheet = open("ISS_Style_Dark.css", "r").read()
-    styleSheet = darkStyleSheet
+    styleSheet = open("ISS_Style_Dark.css", "r").read()
 else:
     #read the contents of the light for day time style sheet
-    lightStyleSheet = open("ISS_Style_Light.css", "r").read()
-    styleSheet = lightStyleSheet
-
+    styleSheet = open("ISS_Style_Light.css", "r").read()
 
 #############################################
 # Get live ISS positions from Heavens Above
@@ -66,8 +57,8 @@ else:
 issGroundUrl = "http://www2.heavens-above.com/orbitdisplay.aspx?icon=iss&width=1500&height=750&mode=M&satid=25544"
 
 # Get image of ISS track over ground:
-issGroundImage = urllib.request.urlretrieve(issGroundUrl, "ISS_Ground.png")
-issGroundImage = Image.open("ISS_Ground.png")
+i = requests.get(issGroundUrl)
+issGroundImage = Image.open(BytesIO(i.content))
 
 # Mask out 'Heavens Above' text in lower right corner:
 # Set size of mask:
@@ -108,8 +99,8 @@ issGroundImage.save("IMG/ISS_Ground.png")
 issOrbitUrl = "http://www2.heavens-above.com/orbitdisplay.aspx?icon=iss&width=300&height=300&mode=N&satid=25544"
 
 # Get image of ISS plane view image:
-issOrbitImage = urllib.request.urlretrieve(issOrbitUrl, "ISS_Orbit.png")
-issOrbitImage = Image.open("ISS_Orbit.png")
+i = requests.get(issOrbitUrl)
+issOrbitImage = Image.open(BytesIO(i.content))
 
 # Mask out 'Heavens Above' text in lower right corner:
 # Set size of mask:
@@ -129,8 +120,8 @@ issOrbitImage.save("IMG/ISS_Orbit.png")
 issViewUrl = "http://www2.heavens-above.com/orbitdisplay.aspx?icon=iss&width=300&height=300&mode=A&satid=25544"
 
 # Get image of ISS satellite view image:
-issViewImage = urllib.request.urlretrieve(issViewUrl, "ISS_View.png")
-issViewImage = Image.open("ISS_View.png")
+i = requests.get(issViewUrl)
+issViewImage = Image.open(BytesIO(i.content))
 
 # Mask out 'Heavens Above' text in lower right corner:
 # Set size of mask:

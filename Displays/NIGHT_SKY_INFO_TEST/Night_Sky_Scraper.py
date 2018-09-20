@@ -12,32 +12,25 @@
 #############################################
 
 # Current system times:
-from datetime import datetime, timedelta
-
-# Julian dates:
-from astropy.time import Time
-
-# Functions for calculating if GMT or BST times:
+import datetime
+import ephem
+import julian
 import pytz
 
 # Parsing information and images from HTML websites:
 #from bs4 import BeautifulSoup
-import urllib
+import urllib3, certifi
 import requests
+from bs4 import BeautifulSoup
 
 # Manipulating (crop, resize, save etc.) images:
+from io import BytesIO
 from PIL import Image
 
-# Manipulating strings:
-import string
-
 # Setting environment variables and/or deleting files:
-import os
+from os import remove
 
-# Ephemeris tools for calculating sunset/twilight times:
-import ephem
-import datetime
-
+http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED',ca_certs=certifi.where())
 
 #############################################
 # Set longitude, latitude and altitude for
@@ -49,17 +42,11 @@ longitude = -2.6054411
 altitude = 370
 
 
-#############################################
-# Determine the current Modified Julian Date:
-#############################################
-
-darkStyleSheet = ""
-lightStyleSheet = ""
 styleSheet = ""
 
 kobs = ephem.Observer()
 kobs.lon, kobs.lat = '-2.5881', '55.2330'
-kobs.date = datetime.datetime.now()
+kobs.date = datetime.datetime.utcnow()
 
 #Compute Sun Altitude
 sol = ephem.Sun()
@@ -70,27 +57,23 @@ alt = int(str(sol.alt).split(':')[0])
 
 if (alt < -6):
     #read the contents of the dark style sheet for night time
-    darkStyleSheet = open("Night_Sky_Style_Dark.css", "r").read()
-    styleSheet = darkStyleSheet
+    styleSheet = open("Night_Sky_Style_Dark.css", "r").read()
 else:
     #read the contents of the light for day time style sheet
-    lightStyleSheet = open("Night_Sky_Style_Light.css", "r").read()
-    styleSheet = lightStyleSheet
+    styleSheet = open("Night_Sky_Style_Light.css", "r").read()
 
-# Current time and date:
-currentTime = datetime.datetime.now()
-currentTime2 = Time(currentTime)
-mjd = currentTime2.mjd
-currentTime = str(currentTime)
-currentTime = currentTime[11:19]
+# Current time and date, with Julian date conversion:
+currentTime = datetime.datetime.utcnow()
+mjd = julian.to_jd(currentTime, fmt='mjd')
 
-# Time and date plus one hour:
-timePlusHour  = datetime.datetime.now() + timedelta(hours = 2)
-timePlusHour2 = Time(timePlusHour)
-mjdPlus = timePlusHour2.mjd
-timePlusHour = str(timePlusHour)
-timePlusHour = timePlusHour[11:19]
+# Time and date plus two hours:
+timePlusHour  = datetime.datetime.utcnow() + datetime.timedelta(hours = 2)
+mjdPlus = julian.to_jd(timePlusHour, fmt='mjd')
 
+gb = pytz.timezone('Europe/London')
+
+currentTime = currentTime.astimezone(tz=gb).strftime("%H:%M (%Z)")
+timePlusHour = timePlusHour.astimezone(tz=gb).strftime("%H:%M (%Z)")
 
 #############################################
 # Get live night sky from Heavens Above
@@ -101,51 +84,9 @@ timePlusHour = timePlusHour[11:19]
 
 # Create URL for Kielder specific night sky image at current modified Julian date:
 nightSkyNowUrl = "http://www.heavens-above.com/wholeskychart.ashx?lat=" + str(latitude) + "&lng=" + str(longitude) + "&loc=Kielder&alt=" + str(altitude) + "&tz=GMT&size=700&SL=1&SN=1&BW=0&time=" + str(mjd) + "&ecl=1&cb=0"
-
-# Get image of current night sky above Kielder:
-nightSkyNowImage = urllib.request.urlretrieve(nightSkyNowUrl, "Night_Sky_Now.png")
-nightSkyNowImage = Image.open("Night_Sky_Now.png")
-
-# Create URL for Kielder specific night sky image at current modified Julian date, plus one hour:
 nightSkyHourUrl = "http://www.heavens-above.com/wholeskychart.ashx?lat=" + str(latitude) + "&lng=" + str(longitude) + "&loc=Kielder&alt=" + str(altitude) + "&tz=GMT&size=700&SL=1&SN=1&BW=0&time=" + str(mjdPlus) + "&ecl=1&cb=0"
-
-# Get of image night sky above Kielder in 2 hours time:
-nightSkyHourImage = urllib.request.urlretrieve(nightSkyHourUrl, "Night_Sky_Next.png")
-nightSkyHourImage = Image.open("Night_Sky_Next.png")
-
-# Change blue background colour in image to pure black:
-# Convert image to RGB colour space:
-nightSkyNowImage = nightSkyNowImage.convert("RGBA")
-# Read in pixel colours:
-pixels = nightSkyNowImage.getdata()
-newPixels = []
-# Loop over pixels:
-for pixel in pixels:
-# Heavens Above background colour is 0,0,51 in RGB space
-  if pixel[0] == 0 and pixel[1] == 0 and pixel[2] == 51:
-    newPixels.append((0, 0, 0, 0))
-  else:
-    newPixels.append(pixel)
-# Set new pixel array:
-nightSkyNowImage.putdata(newPixels)
-
-# Change blue background colour in image to pure black:
-# Convert image to RGB colour space:
-nightSkyHourImage = nightSkyHourImage.convert("RGBA")
-# Read in pixel colours:
-pixels = nightSkyHourImage.getdata()
-newPixels = []
-# Loop over pixels:
-for pixel in pixels:
-# Heavens Above background colour is 0,0,51 in RGB space
-  if pixel[0] == 0 and pixel[1] == 0 and pixel[2] == 51:
-    newPixels.append((0, 0, 0, 0))
-  else:
-    newPixels.append(pixel)
-# Set new pixel array:
-nightSkyHourImage.putdata(newPixels)
-
-# Mask out 'Heavens Above' text in lower right corner:
+"https://www.heavens-above.com/wholeskychart.ashx?lat=55.2323&lng=-2.616&loc=Kielder&alt=378&tz=GMT&size=800&SL=1&SN=1&BW=0&time=58381.77784&ecl=0&cb=0"
+# Create Mask to cover heavens-above logo
 # Set size of mask:
 nightSkyCreditsMaskSize = 113, 9
 nightSkyCreditsColour = '#808080'
@@ -154,19 +95,37 @@ nightSkyCreditsMask = Image.new("RGBA", nightSkyCreditsMaskSize, nightSkyCredits
 nightSkyCreditsMask.save("IMG/Night_Sky_Credits_Mask.png")
 # Set top left corner of mask position in pixels:
 nightSkyCreditsMaskPosition = 584, 687
+
+for url in [nightSkyNowUrl, nightSkyHourUrl]:
+    print(url)
+    i = http.request('GET', url)
+    img = Image.open(BytesIO(i.data))
+# Change blue background colour in image to pure black:
+# Convert image to RGB colour space:
+    img = img.convert("RGBA")
+# Read in pixel colours:
+    pixels = img.getdata()
+    newPixels = []
+# Loop over pixels:
+    for pixel in pixels:
+# Heavens Above background colour is 0,0,51 in RGB space
+        if pixel[0] == 0 and pixel[1] == 0 and pixel[2] == 51:
+            newPixels.append((0, 0, 0, 0))
+        else:
+            newPixels.append(pixel)
+# Set new pixel array:
+    img.putdata(newPixels)
 # Paste mask over text region in planets image for both images:
-nightSkyNowImage.paste(nightSkyCreditsMask, nightSkyCreditsMaskPosition)
-nightSkyHourImage.paste(nightSkyCreditsMask, nightSkyCreditsMaskPosition)
+    img.paste(nightSkyCreditsMask, nightSkyCreditsMaskPosition)
 
 # Save new size and colour image:
-nightSkyNowImage.save("IMG/Night_Sky_Now.png")
-nightSkyHourImage.save("IMG/Night_Sky_Next.png")
+    if url == nightSkyNowUrl:
+        img.save("IMG/Night_Sky_Now.png")
+    else:
+        img.save("IMG/Night_Sky_Next.png")
 
 # Delete inner/outer/credits mask images now no longer needed:
-os.remove("IMG/Night_Sky_Credits_Mask.png")
-
-# Create URL for Kielder specific night sky image at current modified Julian date, plus one hour:
-nightSkySunUrl = "http://www.heavens-above.com/sun.aspx?lat=" + str(latitude) + "&lng=" + str(longitude) + "&loc=Kielder&alt=" + str(altitude) + "&tz=GMT"
+remove("IMG/Night_Sky_Credits_Mask.png")
 
 # Get sun constellation data from Heavens Above table:
 #soup = BeautifulSoup(urlopen(nightSkySunUrl).read())
@@ -211,21 +170,9 @@ kielderObs = ephem.Observer()
 # PyEphem takes and returns only UTC times. Current noon
 # is not always UTC noon in Kielder depending on daylight saving:
 # Determine if GMT or BST:
-tz = pytz.timezone('Europe/London')
-now = pytz.utc.localize(datetime.datetime.utcnow())
-britishSummerTime = now.astimezone(tz).dst() != timedelta(0)
-if britishSummerTime == True:
-  utcOffset = '11:00:00'
-elif britishSummerTime == False:
-  utcOffset = '12:00:00'
+now = datetime.datetime.utcnow()
 
-currentDate = datetime.datetime.now()
-currentDate = str(currentDate)
-currentDate = currentDate[0:10]
-
-kielderObsDate = currentDate + ' ' + utcOffset
-kielderObsDate = kielderObsDate.replace('-','/')
-kielderObs.date = kielderObsDate
+kielderObs.date = now
 
 # Set coordinates as strings for PyEphem:
 kielderObs.lat = str(55.2305486)
@@ -246,12 +193,17 @@ kielderObs.horizon = '-0:34'
 
 # Calculature sunrise/noon/sunset times for today:
 sunRise = kielderObs.previous_rising(ephem.Sun()) # Sunrise
-solarNoon = kielderObs.next_transit(ephem.Sun(), start = sunRise) # Solar noon
-solarNoon = str(solarNoon)
-solarNoon = solarNoon[-8:]
+
+kielderObs.date = sunRise
+
+sunRise = sunRise.datetime().replace(tzinfo=pytz.utc)
+
+solarNoon = kielderObs.next_transit(ephem.Sun()) # Solar noon
+solarNoon = solarNoon.datetime().replace(tzinfo=pytz.utc)
+
 sunSet = kielderObs.next_setting(ephem.Sun()) # Sunset
-sunSet = str(sunSet)
-sunSet = sunSet[-8:]
+sunSet = sunSet.datetime().replace(tzinfo=pytz.utc)
+
 
 # Calculate twilight (civil, nautical, astronomical):
 # (relocate the horizon lower for various twilights)
@@ -260,8 +212,7 @@ sunSet = sunSet[-8:]
 try:
   kielderObs.horizon = '-6'
   endCivilTwilight = kielderObs.next_setting(ephem.Sun(), use_center = True) # End civil twilight
-  endCivilTwilight = str(endCivilTwilight)
-  endCivilTwilight = endCivilTwilight[-8:]
+  endCivilTwilight = endCivilTwilight.datetime().replace(tzinfo=pytz.utc)
 except:
   endCivilTwilight = 'N/A'
 
@@ -269,8 +220,7 @@ except:
 try:
   kielderObs.horizon = '-12'
   endNauticalTwilight = kielderObs.next_setting(ephem.Sun(), use_center = True) # End nautical twilight
-  endNauticalTwilight = str(endNauticalTwilight)
-  endNauticalTwilight = endNauticalTwilight[-8:]
+  endNauticalTwilight = endNauticalTwilight.datetime().replace(tzinfo=pytz.utc)
 # In case it doesn't actually get this dark in summer time:
 except:
   endNauticalTwilight = 'N/A'
@@ -279,22 +229,25 @@ except:
 try:
   kielderObs.horizon = '-18'
   endAstronomicalTwilight = kielderObs.next_setting(ephem.Sun(), use_center = True) # Begin astronomical twilight
-  endAstronomicalTwilight = str(endAstronomicalTwilight)
-  endAstronomicalTwilight = endAstronomicalTwilight[-8:] + ' (GMT)'
-# In case it doesn't actually get this dark in summer time:
+  endAstronomicalTwilight = endAstronomicalTwilight.datetime().replace(tzinfo=pytz.utc)
 except:
   endAstronomicalTwilight = 'N/A'
 
+# Convert times to strings in correct time zone (GMT/BST)
+for time in [sunRise, solarNoon, sunSet, endCivilTwilight, endNauticalTwilight, endAstronomicalTwilight]:
+    if time == 'N/A':
+        continue
+    else:
+        time = time.astimezone(tz=gb).strftime("%H:%M:%S %Z")
+
 # Calculate current zodiacal constellation (current position of Sun):
-constellationDate = currentDate[0:4] + '/' + currentDate[5:7] + '/' + currentDate[8:10]
 s = ephem.Sun()
-s.compute(constellationDate)
+now = datetime.datetime.utcnow()
+s.compute(now)
 sunConstellation = ephem.constellation(s)
 sunConstellation = sunConstellation[1] # Comes as tuple, e.g. ('Tau', 'Taurus')
-sunConstellation = str(sunConstellation)
 
 # Calculate horoscope constellation based on astrology dates given todays date:
-now = datetime.datetime.now()
 month = int(now.month)
 day = int(now.day)
 if ((int(month) == 12 and int(day) >= 22) or (int(month) == 1 and int(day) <= 19)):

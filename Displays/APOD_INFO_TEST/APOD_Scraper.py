@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 #############################################
 # PYTHON SCRIPT TO WEB SCRAPE IMAGES AND
@@ -13,30 +13,20 @@
 import datetime
 import ephem as e
 
-# Julian dates:
-from astropy.time import Time
-
 # Parsing information and images from HTML websites:
 from bs4 import BeautifulSoup
 import urllib3, certifi, requests, json
 
 # NASA APOD API and enviromental variable for API key:
-from datetime import date
 from nasa import apod as nasaApod
 
 # Manipulating (crop, resize, save etc.) images:
 from PIL import Image
 from io import BytesIO
 
-# Manipulating strings:
-import string
-
 # Setting environment variables and/or deleting files:
-import os
 from subprocess import run
 
-darkStyleSheet = ""
-lightStyleSheet = ""
 styleSheet = ""
 
 kobs = e.Observer()
@@ -68,9 +58,6 @@ else:
 # Note that API was installed with pip installer, but API
 # code was changed to reflect different NASA API website
 
-# Set NASA API key as environment variable:
-os.environ['NASA_API_KEY'] = 'VSeA2cMgNPtUslwyxj1cSGztgo8ZLJhUkGyA2IZ1'
-
 apodDay = datetime.datetime.now()
 
 if (apodDay.hour < 9):
@@ -91,41 +78,37 @@ jApod = requests.get(apodUrl2)
 aPod = json.loads(jApod.text)
 
 apodPage = http.request('GET', apodUrl3)
-testsoup = BeautifulSoup(apodPage.data.decode('utf-8'), "html.parser")
+soup = BeautifulSoup(apodPage.data.decode('utf-8'), "html.parser")
 yturl = ""
 iframe = ""
 
-if (str(testsoup.iframe) != 'None'):
-    #print(testsoup.iframe)
-    if "youtube" in str(testsoup.iframe): # Youtube Video, prepare to download
-        yturl = str(testsoup.iframe).split("youtube.com/embed/")[1].split("?rel")[0]
+if (str(soup.iframe) != 'None'):
+    #print(soup.iframe)
+    if "youtube" in str(soup.iframe): # Youtube Video, prepare to download
+        yturl = str(soup.iframe).split("youtube.com/embed/")[1].split("?rel")[0]
         run("youtube-dl -F https://youtube.com/watch?v="+yturl+" | grep mp4 | grep video | tail -n 1 > ytinfo.txt", shell=True)
         with open("ytinfo.txt", "r") as f:
             qual = f.read().split("mp4")[0].strip()
         run("youtube-dl -f "+qual+" https://youtube.com/watch?v="+yturl+"", shell=True)
         run("mv *.mp4 APODVideo.mp4", shell=True)
     else: # Other interactive frame. Embed directly.
-        iframe = str(testsoup.iframe)
+        iframe = str(soup.iframe)
 else: # APOD is image, fetch
     i = requests.get(aPod['hdurl'])
     apodImage = Image.open(BytesIO(i.content))
     #print(Image.format(apodImage))
     apodImage.save("NASA_APOD.jpg")
 
-# Get explanatory text for NASA APOD website:
-apodTitle = aPod['title']
-apodExplanation = aPod['explanation']
-apodCredit = aPod['copyright']
 
 # Save Data for Future Use
 with open("explanation.txt", "w+") as ex:
-    ex.write(apodExplanation)
+    ex.write(aPod['explanation'])
 
 with open("title.txt", "w+") as ti:
     ti.write(apodTitle)
 
 with open("credit.txt", "w+") as cr:
-    cr.write(apodCredit)
+    cr.write(aPod['copyright'])
 
 #############################################
 # Write data to HTML file:
@@ -167,11 +150,11 @@ NASA Astronomy Picture of the Day
 <div class = "apodPosition">
     '''+frame+'''
 	<!--<img style = "max-height: 650px; max-width: 1840px;" src = "APOD_INFO_TEST/NASA_APOD.jpg">-->
-	<div class = "key">''' + apodTitle + '''</div>
-	<div class = "caption">''' + apodExplanation + '''</div>
+	<div class = "key">''' + aPod['title'] + '''</div>
+	<div class = "caption">''' + aPod['explanation'] + '''</div>
 </div>
 
-<div class = "credits">Image Credit: ''' + apodCredit + '''</div>
+<div class = "credits">Image Credit: ''' + aPod['copyright'] + '''</div>
 
 </body>
 </html>'''
