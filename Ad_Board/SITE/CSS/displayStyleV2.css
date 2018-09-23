@@ -58,10 +58,12 @@ body
   font-family: Arial;
   width: 100%;
   height: 750px;
+  margin-top: -90px;
 }
 .blockThree
 {
   color: white;
+  margin-top: 70px;
 }
 .weather
 {
@@ -167,4 +169,27 @@ td
 #issGround
 {
   width: 100%;
+  padding: 40px;
+}
+#issAbove
+{
+  margin-left: 40px;
+  float: left;
+}
+.issInfo
+{
+  border: white 5px solid;
+  font-size: 20px;
+  font-family: Arial;
+  color: white;
+  width: 60%;
+  float: right;
+  margin-right: 40px;
+  text-align: center;
+  height: 200px;
+  margin-top: 50px;
+}
+.issInfo p
+{
+  padding: 10px;
 }

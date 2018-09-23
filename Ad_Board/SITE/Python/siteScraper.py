@@ -11,8 +11,54 @@ import csv
 import json, requests
 import urllib
 from PIL import Image
+import time
 
 currentWeatherPeriod = 0
+phaseName = ""
+
+diff = 0
+
+def getMoonPhaseName(phasePercentage):
+    if phasePercentage < 1:
+        phaseName = "New Moon"
+    if phasePercentage >= 1 and phasePercentage <= 49:
+        phaseName =  moonStatus + " Crescent"
+    if phasePercentage >= 50 and phasePercentage <= 50.99:
+        phaseName = "Half Moon"
+    if phasePercentage >= 51 and phasePercentage <= 99:
+        phaseName = moonStatus + " Gibbous"
+    if phasePercentage > 99:
+        phaseName = "Full Moon"
+    return phaseName
+
+def getTimeDiff():
+
+    moonsetTime = datetime.datetime.strptime(str(riseset[2][1].strftime("%H:%M:%S")), "%H:%M:%S")
+    sunsetTime = datetime.datetime.strptime(str(riseset[0][1].strftime("%H:%M:%S")), "%H:%M:%S")
+
+    moon_ts = time.mktime(moonsetTime.timetuple())
+    sun_ts = time.mktime(sunsetTime.timetuple())
+
+    diff = int(moon_ts - sun_ts) / 60
+
+    if diff > 60 or diff < -60:
+        if diff < -60:
+            diff = abs(diff)
+        diff = float(diff) / 60
+        diff = round(diff, 1)
+        diff = str(diff) + " hours"
+    else:
+        if diff < 0:
+            diff = abs(diff)
+        diff = round(diff, 1)
+        diff = str(diff) + " minutes"
+
+    #print(diff)
+    #print(riseset[2][1])
+    #print(riseset[0][1])
+
+    return diff
+
 
 # Key definition for moonrise/set table
 def takeSecond(elem):
@@ -179,188 +225,197 @@ issGroundImg.save("../IMG/issGround.png")
 #end of mask code for ground view
 
 
-
-htmlFile = open("../DISPLAY.html", "w+")
+htmlFile = open("../Display_V2.html", "w+")
 
 htmlFile.write(
 '''<!DOCTYPE html>
 <html>
   <head>
-      <title>AD DISPLAY - KIELDER OBSERVATORY</title>
-      <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,700" rel="stylesheet">
-      <link type="text/css" rel="stylesheet" href="CSS/haydensStyle.css"/>
+      <title>AD BOARD - KIELDER OBSERVATORY</title>
+      <link rel="stylesheet" type="text/css" href="CSS/displayStyleV2.css">
   </head>
 
   <body>
-      <p style="text-align: center;"><img class="logoIMG" src="IMG/logoNew.png"></p>
 
-      <!--Start of code for automatic slide show
-          The slide show will change the image every 3 seconds
-          The slide show will be used to show light polution-->
+      <div class="blockOne">
 
-          <div class="slideShowContainer">
-            <div class="slides fade">
-              <img src="IMG/LP_IMAGE.png" style="width: 100%;">
-              <div class="text">Image taken in a light polluted enviroment</div>
-            </div>
+        <!--Imgs and divs for the slide show-->
 
-            <div class="slides fade">
-              <img src="IMG/LPF_IMAGE.png" style="width: 100%;">
-              <div class="text">Image taken in a light pollution free enviroment</div>
-            </div>
+        <div class="slideShowContainer">
 
-            <div class="slides fade">
-              <p style="text-align: center;"><img src="IMG/issAbove.png" style="width: 50%;"></p>
-              <div class="text">current position of the ISS</div>
-            </div>
-
-            <div class="slides fade">
-               <p style="text-align: center;"><img src="IMG/issGround.png" style="width: 100%;"></p>
-              <div class="text">current position of the ISS</div>
-            </div>
-
+          <div class="slide fade">
+            <img src="IMG/blockOneImgs/Dan M MILKY WAY 2.jpg">
           </div>
 
-          <script>
-          var slideIndex = 0;
-          showSlides();
+          <div class="slide fade">
+            <img src="IMG/blockOneImgs/Dan M MILKY WAY 2.jpg">
+          </div>
 
-          function showSlides()
-          {
-            var i;
-            var slides = document.getElementsByClassName("slides");
-            for (i = 0; i < slides.length; i++)
-            {
-              slides[i].style.display = "none";
-            }
-            slideIndex++;
-            if (slideIndex > slides.length)
-            {
-              slideIndex = 1
-            }
-            slides[slideIndex-1].style.display = "block";
-            setTimeout(showSlides, 5000); //Show image for 5 seconds
-          }
-          </script>
+          <div class="slide fade">
+            <img src="IMG/blockOneImgs/Dan M MILKY WAY 2.jpg">
+          </div>
 
-      <!--End of Code for automatic slide show-->
-
-      <div class="weatherDataTableDiv">
-        <table class="weatherDataTable">
-          <tr>
-            <th>Temperature (Feels Like)</th>
-            <th>Wind Speed (Gust)</th>
-            <th>Wind Direction</th>
-            <th>Precipitation Probability</th>
-          </tr>
-          <tr>
-            <!--Insert Feels Like Temp here-->
-            <td>'''+str(temp)+''' &deg;C ('''+str(feelLikeTemp)+''' &deg;C)</td>
-            <!--Insert Wind Info here-->
-            <td>'''+str(windspd)+''' mph ('''+str(gust)+''')</td>
-            <td>'''+str(winddir)+'''</td>
-            <!--Insert Precipertaion Probability here-->
-            <td>'''+str(precip)+'''&percnt;</td>
-          </tr>
-        </table>
-      </div>
-      <!-- Add in div tag/table to showcase moon illumination info and
-      phase image-->
-
-      <div class="weatherIconDiv">
-        <img class="weatherIcon" src="IMG/metofficeicons/metimg'''+str(weatherCode)+'''.svg">
-     </div>
-
-     <div class="date">
-     Tonight: <b>'''+datestr+'''</b> in <b>'''+str(location).title()+'''</b>
-     </div>
-
-        <div class="astroTableDiv">
-            <table class="astroTable">
-                <tr>
-                    <td colspan="2">Last Full Moon</td>
-                    <td rowspan="3" ><img src="IMG/moonframes/'''+phase+'''" style="width:250px;height:250px;"></img></td>
-                    <td rowspan="2" style="font-size:90px"><b>'''+str(moonPhase)+'''%</b> lit</td>
-                    <td colspan="2">Next New Moon</td>
-                </tr>
-                <tr>
-                    <td>'''+str(lastFullMoonDate)+'''</td>
-                    <td rowspan="2">Last Full</td>
-                    <td>'''+str(nextNewMoonDate)+'''</td>
-                    <td rowspan="2">Next New</td>
-                    </tr>
-                <tr>
-                    <td>'''+str(lastFullMoonTime)+'''</td>
-                    <td>Moon Phase</td>
-                    <td>'''+str(nextNewMoonTime)+'''</td>
-                </tr>
-            </table>
         </div>
+        <img id="kLogo" src="IMG/blockOneImgs/ObsLogo_NoBG.png">
+        <script>
+        var slideIndex = 0;
+        showSlides();
 
-        <div class="astroTableDiv">
-          <table class="astroTable">
+        function showSlides()
+        {
+          var i;
+          var slides = document.getElementsByClassName("slide");
+          for (i = 0; i < slides.length; i++)
+          {
+            slides[i].style.display = "none";
+          }
+          slideIndex++;
+          if (slideIndex > slides.length)
+          {
+            slideIndex = 1
+          }
+          slides[slideIndex-1].style.display = "block";
+          setTimeout(showSlides, 3000); //Show image for 5 seconds
+        }
+        </script>
+
+        <!--End of imgs and divs for the slide show-->
+        <p id="text">Stargazing heaven all year round!</p>
+      </div>
+
+      <div class="blockTwo">
+        <div class="weather tables fade">
+          <p class="title">Current weather <br/> in Kielder</p>
+          <img id="weatherIcon" src="IMG/metofficeicons/metimg'''+str(weatherCode)+'''.svg"/>
+
+
+          <table id="weatherTable">
             <tr>
-              <th>'''+riseset[0][0]+'''</th>
-              <th>'''+riseset[1][0]+'''</th>
-              <th>'''+riseset[2][0]+'''</th>
-              <th>'''+riseset[3][0]+'''</th>
+              <th>Temperature (Feels like)</th>
+              <th>Wind Speed (Gust)</th>
+              <th>Wind Direction</th>
+              <th>Percipitation Probablity</th>
             </tr>
             <tr>
-              <!--Input time for sunset-->
+              <td>'''+str(temp)+'''&deg;C ('''+str(feelLikeTemp)+''' &deg;C)</td>
+              <td>'''+str(windspd)+''' mph ('''+str(gust)+''')</td>
+              <td>'''+str(winddir)+'''</td>
+              <td>'''+str(precip)+'''%</td>
+            </tr>
+          </table>
+
+          <table id="astroDataTable">
+            <tr>
+              <th>Sunset</th>
+              <th>Moonrise</th>
+              <th>Sunrise</th>
+              <th>Moonset</th>
+            </tr>
+            <tr>
               <td>'''+riseset[0][1].strftime("%H:%M:%S %Z")+'''</td>
-              <!--input time for moonrise-->
               <td>'''+riseset[1][1].strftime("%H:%M:%S %Z")+'''</td>
-              <!--Input time for sunrise-->
               <td>'''+riseset[2][1].strftime("%H:%M:%S %Z")+'''</td>
-              <!--Input time for moonset-->
               <td>'''+riseset[3][1].strftime("%H:%M:%S %Z")+'''</td>
             </tr>
           </table>
         </div>
 
-        <div class="eventTableDiv">
-          <table class="eventTable">
-            <tr>
-              <th>Date</th>
-              <th>Event Name</th>
-              <th>Spaces Available</th>
-            </tr>
+        <div class="moon tables fade">
+          <p class="title">Tonights Moon</p>
+          <img id="moonImage" src="IMG/moonframes/'''+str(phase)+'''"/>
 
-            <tr>
-              <td>DD/MM</td>
-              <td>Event Title</td>
-              <td>Spaces</td>
-            </tr>
-            <tr>
-              <td>DD/MM</td>
-              <td>Event Title</td>
-              <td>Spaces</td>
-            </tr>
-            <tr>
-              <td>DD/MM</td>
-              <td>Event Title</td>
-              <td>Spaces</td>
-            </tr>
-
-            <tr>
-              <td>DD/MM</td>
-              <td>Event Title</td>
-              <td>Spaces</td>
-            </tr>
-
-            <tr>
-              <td>DD/MM</td>
-              <td>Event Title</td>
-              <td>Spaces</td>
-            </tr>
-
-            <tr>
-              <td>DD/MM</td>
-              <td>Event Title</td>
-              <td>Spaces</td>
-            </tr>
-          </table>
+          <p class="moonData">'''+str(moonPhase)+'''% / '''+getMoonPhaseName(float(moonPhase))+'''
+            <br/><br/>
+            The Moon sets '''+str(getTimeDiff())+''' after the sun
+          </p>
         </div>
+
+      <div class="ISS tables fade">
+        <img id="issGround" src="IMG/issGround.png">
+        <img id="issAbove" src="IMG/issAbove.png">
+
+        <div class="issInfo">
+          <p>ISS Passes / Crew Info</p>
+        </div>
+      </div>
+    </div>
+
+      <script>
+      var tableIndex = 0;
+      showTables();
+
+      function showTables()
+      {
+        var i;
+        var tables = document.getElementsByClassName("tables");
+        for (i = 0; i < tables.length; i++)
+        {
+          tables[i].style.display = "none";
+        }
+        tableIndex++;
+        if (tableIndex > tables.length)
+        {
+          tableIndex = 1
+        }
+        tables[tableIndex-1].style.display = "block";
+        setTimeout(showTables, 5000); //Show data for 5 seconds
+      }
+      </script>
+
+      <div class="blockThree">
+
+        <table id="eventTable">
+          <tr>
+            <th style="border-right: white solid 5px">Date</th>
+            <th style="border-right: white solid 5px">Event Name</th>
+            <th>Spaces</th>
+          </tr>
+          <tr>
+            <td>Date</td>
+            <td>Event Name</td>
+            <td>Spaces</td>
+          </tr>
+          <tr>
+            <td>Date</td>
+            <td>Event Name</td>
+            <td>Spaces</td>
+          </tr>
+          <tr>
+            <td>Date</td>
+            <td>Event Name</td>
+            <td>Spaces</td>
+          </tr>
+          <tr>
+            <td>Date</td>
+            <td>Event Name</td>
+            <td>Spaces</td>
+          </tr>
+          <tr>
+            <td>Date</td>
+            <td>Event Name</td>
+            <td>Spaces</td>
+            <tr>
+              <td>Date</td>
+              <td>Event Name</td>
+              <td>Spaces</td>
+            </tr>
+            <tr>
+              <td>Date</td>
+              <td>Event Name</td>
+              <td>Spaces</td>
+              <tr>
+                <td>Date</td>
+                <td>Event Name</td>
+                <td>Spaces</td>
+              </tr>
+              <tr>
+                <td>Date</td>
+                <td>Event Name</td>
+                <td>Spaces</td>
+              </tr>
+        </table>
+
+      </div>
   </body>
 </html>
 '''
