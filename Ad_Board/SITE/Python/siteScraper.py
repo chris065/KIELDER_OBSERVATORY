@@ -160,6 +160,11 @@ riseset = [("Sunrise", sunrise),("Sunset", sunset),("Moonrise",moonrise),("Moons
 riseset.sort(key=takeSecond)
 #print(riseset)
 
+#print(riseset[0][0]) #sunset
+#print(riseset[1][0]) #moonrise
+#print(riseset[2][0]) #moonset
+#print(riseset[3][0]) #sunrise
+
 
 
 #Code to pull back the weather
@@ -314,8 +319,8 @@ htmlFile.write(
             <tr>
               <td>'''+riseset[0][1].strftime("%H:%M:%S %Z")+'''</td>
               <td>'''+riseset[1][1].strftime("%H:%M:%S %Z")+'''</td>
-              <td>'''+riseset[2][1].strftime("%H:%M:%S %Z")+'''</td>
               <td>'''+riseset[3][1].strftime("%H:%M:%S %Z")+'''</td>
+              <td>'''+riseset[2][1].strftime("%H:%M:%S %Z")+'''</td>
             </tr>
           </table>
         </div>
