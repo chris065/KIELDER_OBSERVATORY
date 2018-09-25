@@ -97,7 +97,7 @@ nightSkyCreditsMask.save("IMG/Night_Sky_Credits_Mask.png")
 nightSkyCreditsMaskPosition = 584, 687
 
 for url in [nightSkyNowUrl, nightSkyHourUrl]:
-    print(url)
+    #print(url)
     i = http.request('GET', url)
     img = Image.open(BytesIO(i.data))
 # Change blue background colour in image to pure black:

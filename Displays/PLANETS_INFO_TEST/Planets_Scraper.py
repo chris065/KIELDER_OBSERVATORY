@@ -12,7 +12,9 @@
 #############################################
 
 # Current system times:
-from datetime import datetime
+import datetime
+import julian
+import ephem as e
 
 # Julian dates:
 from astropy.time import Time
@@ -23,23 +25,16 @@ from astropy.coordinates import SkyCoord
 
 # Parsing information and images from HTML websites:
 from bs4 import BeautifulSoup
-import urllib
+import urllib3, certifi
 import requests
 
 # Manipulating (crop, resize, save etc.) images:
 from PIL import Image
-
-# Manipulating strings:
-import string
+from io import BytesIO
 
 # Setting environment variables and/or deleting files:
-import os
+from os import remove
 
-import ephem as e
-import datetime
-
-darkStyleSheet = ""
-lightStyleSheet = ""
 styleSheet = ""
 
 kobs = e.Observer()
@@ -53,7 +48,7 @@ sol.compute(kobs)
 # Return First digit of Sun's altitude
 alt = int(str(sol.alt).split(':')[0])
 
-if (alt < -6):
+if (alt <= -6):
     #read the contents of the dark style sheet for night time
     styleSheet = open("Planets_Style_Dark.css", "r").read()
 else:
@@ -66,8 +61,7 @@ else:
 #############################################
 
 currentTime = datetime.datetime.now()
-currentTime = Time(currentTime)
-mjd = currentTime.mjd
+mjd = julian.to_jd(currentTime)
 
 
 #############################################
@@ -88,13 +82,15 @@ altitude = 370
 
 # Only needs to be done daily upon startup
 
+http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED',ca_certs=certifi.where())
+
 # Create URL for planetary position image
 # (with correct current Modified Julian Date and at desired size):
 planetsUrl = "http://www.heavens-above.com/SolarSystemPic.aspx?Epoch=" + str(mjd) + "&Width=500&Height=500&cul=en"
 
 # Get solar system planetary positions image:
-planetsImage = urllib.request.urlretrieve(planetsUrl, "Planets_Position.png")
-planetsImage = Image.open("Planets_Position.png")
+i = http.request('GET', planetsUrl)
+planetsImage = Image.open(BytesIO(i.data))
 
 # Change blue background colour in image to pure black:
 # Convert image to RGB colour space:
@@ -153,16 +149,19 @@ planetsImage = planetsImage.resize(planetsSize, Image.ANTIALIAS)
 planetsImage.save("IMG/Planets_Position.png")
 
 # Delete inner/outer/credits mask images now no longer needed:
-os.remove("Planets_Credits_Mask.png")
-os.remove("Planets_Outer_Mask.png")
-os.remove("Planets_Inner_Mask.png")
+remove("Planets_Credits_Mask.png")
+remove("Planets_Outer_Mask.png")
+remove("Planets_Inner_Mask.png")
 
 # Create URL for planetary position tables
 # (with correct long. lat. alt. and Modified Julian Date):
 planetsTablesUrl = "http://www.heavens-above.com/planets.aspx?lat=" + str(latitude) + "&lng=" + str(longitude) + "&loc=Kielder+Observatory&alt=" + str(altitude) + "&tz=UCT"
 
 # Get planetary distance and speed information from Heavens Above table:
-soup = BeautifulSoup(urllib.request.urlopen(planetsTablesUrl).read(), "html.parser")
+
+#soup = BeautifulSoup(urllib.request.urlopen(planetsTablesUrl).read(), "html.parser")
+planetPage = http.request('GET', planetsTablesUrl)
+soup = BeautifulSoup(planetPage.data.decode('utf-8'))
 
 # Get Mercury data (in AU and kms):
 mercurySolDistance = soup.find('span', {'id': 'ctl00_cph1_r1'})
