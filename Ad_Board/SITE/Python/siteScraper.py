@@ -15,31 +15,39 @@ import time
 
 currentWeatherPeriod = 0
 phaseName = ""
+observation = ""
+auToKm = 149600000
+
+weatherCodeDesc = ["Clear Night", "Sunny Day", "Partly Cloudy (Night)", "Partly Cloudy (Day)", "Not Used",
+                   "Mist","Fog", "Cloudy", "Overcast", "Light Rain Shower (Night)", "Light Rain Shower (day)",
+                   "Drizzle", "Light Rain", "Heavy Rain Shower (Night)", "Heavy Rain Shower (Day)", "Heavy Rain",
+                   "Sleet Shower (Night)", "Sleet Shower (Day)", "Sleet", "Hail Shower (Night)", "Hail Shower (Day)",
+                   "Hail", "Heavy Snow Shower (Night)", "Heavy Snow Shower (Day)", "Heavy Snow", "Thunder Shower (Night)",
+                   "Thunder Shower (Day)", "Thunder"]
 
 diff = 0
 
 def getMoonPhaseName(phasePercentage):
-    if phasePercentage < 1:
+    if phasePercentage < 2:
         phaseName = "New Moon"
-    if phasePercentage >= 1 and phasePercentage <= 49:
+    elif phasePercentage < 45:
         phaseName =  moonStatus + " Crescent"
-    if phasePercentage >= 50 and phasePercentage <= 50.99:
+    elif phasePercentage < 55:
         phaseName = "Half Moon"
-    if phasePercentage >= 51 and phasePercentage <= 99:
+    elif phasePercentage < 98:
         phaseName = moonStatus + " Gibbous"
-    if phasePercentage > 99:
+    else:
         phaseName = "Full Moon"
+
     return phaseName
 
 def getTimeDiff():
 
-    moonsetTime = datetime.datetime.strptime(str(riseset[2][1].strftime("%H:%M:%S")), "%H:%M:%S")
-    sunsetTime = datetime.datetime.strptime(str(riseset[0][1].strftime("%H:%M:%S")), "%H:%M:%S")
+    #Convert the times to time stamps
+    moon_ts = time.mktime(moonset.timetuple())
+    sun_ts = time.mktime(sunset.timetuple())
 
-    moon_ts = time.mktime(moonsetTime.timetuple())
-    sun_ts = time.mktime(sunsetTime.timetuple())
-
-    diff = int(moon_ts - sun_ts) / 60
+    diff = int(sun_ts - moon_ts) / 60
 
     if diff > 60 or diff < -60:
         if diff < -60:
@@ -54,8 +62,6 @@ def getTimeDiff():
         diff = str(diff) + " minutes"
 
     #print(diff)
-    #print(riseset[2][1])
-    #print(riseset[0][1])
 
     return diff
 
@@ -165,6 +171,12 @@ riseset.sort(key=takeSecond)
 #print(riseset[2][0]) #moonset
 #print(riseset[3][0]) #sunrise
 
+moon = e.Moon()
+moon.compute(datetime.datetime.now())
+earthToMoon = int(moon.earth_distance * auToKm)
+earthToMoon = format(earthToMoon, ' ,d')
+#print(earthToMoon)
+
 
 
 #Code to pull back the weather
@@ -192,6 +204,14 @@ temp = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][currentWeatherP
 precip = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][currentWeatherPeriod]['Pp'])
 #print("Precipitation Probablity: "+ precip + "%")
 weatherCode = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][currentWeatherPeriod]['W'])
+
+if observation == "NA":
+    observation = "N/A"
+else:
+    observation = str(weatherCodeDesc[int(weatherCode)])
+
+#print(observation + " ("+weatherCode+")")
+
 
 
 windspd = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][currentWeatherPeriod]['S'])
@@ -285,24 +305,24 @@ htmlFile.write(
         </script>
 
         <!--End of imgs and divs for the slide show-->
-        <p id="text">Stargazing heaven all year round!</p>
+        <p id="text">Stargazing heaven <br/> all year round!</p>
       </div>
 
       <div class="blockTwo">
         <div class="weather tables fade">
           <p class="title">Current weather <br/> in Kielder</p>
           <img id="weatherIcon" src="IMG/metofficeicons/metimg'''+str(weatherCode)+'''.svg"/>
+          <p class="weatherIconDesc">'''+str(observation)+'''</p>
 
+          <p class="Temp">'''+str(temp)+''' &deg;C</p>
 
           <table id="weatherTable">
             <tr>
-              <th>Temperature (Feels like)</th>
               <th>Wind Speed (Gust)</th>
               <th>Wind Direction</th>
               <th>Percipitation Probablity</th>
             </tr>
             <tr>
-              <td>'''+str(temp)+'''&deg;C ('''+str(feelLikeTemp)+''' &deg;C)</td>
               <td>'''+str(windspd)+''' mph ('''+str(gust)+''')</td>
               <td>'''+str(winddir)+'''</td>
               <td>'''+str(precip)+'''%</td>
@@ -329,9 +349,11 @@ htmlFile.write(
           <p class="title">Tonights Moon</p>
           <img id="moonImage" src="IMG/moonframes/'''+str(phase)+'''"/>
 
-          <p class="moonData">'''+str(moonPhase)+'''% / '''+getMoonPhaseName(float(moonPhase))+'''
-            <br/><br/>
-            The Moon sets '''+str(getTimeDiff())+''' after the sun
+          <p class="moonData"><b>'''+str(moonPhase)+'''%<b/> / <b>'''+getMoonPhaseName(float(moonPhase))+'''<b/>
+            <br/><br/><br/>
+            The Moon sets <b>'''+str(getTimeDiff())+'''<b/> after the sun
+            <br/><br/><br/>
+            Distance from the moon: <b>'''+str(earthToMoon)+''' Km</b>
           </p>
         </div>
 
