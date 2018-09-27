@@ -29,10 +29,17 @@ with open("calendar.json", "r") as i:
     #print(eventList)
     #allEv = open('allEvents.json', 'w')
     #spacesEv = open('spacesEvents.json', 'w')
+
+    entry = {}
+    entry['spaces'] = []
+    entry['allEv'] = []
+
     for event in eventList:
+
         start = datetime.datetime.strptime(event['start'],"%Y-%m-%d %H:%M:%S")
         date = start.strftime("%d %b")
         time = start.strftime("%H:%M")
+
         if 'SOLD OUT:' in event['title']:
             places = 0
             title = event['title'].split('OUT:')[1].strip()
@@ -43,8 +50,29 @@ with open("calendar.json", "r") as i:
         else:
             title = event['title']
             places = 10
-        print(date, time, title, places)
+
+        if len(entry['allEv']) <= 10:
+            entry['allEv'].append({
+            'date': date,
+            'time': time,
+            'title': title,
+            'places': places
+            })
+
+        if len(entry['spaces']) <= 10:
+            if 'SOLD OUT' not in event['title']:
+                entry['spaces'].append({
+                'date': date,
+                'time': time,
+                'title': title,
+                'places': places
+                })
+        else:
+            break
+
+    print(entry)
     #allEv.close()
     #spacesEv.close()
 
-print('done')
+with open("events.json", "w") as o:
+    json.dump(entry, o)
