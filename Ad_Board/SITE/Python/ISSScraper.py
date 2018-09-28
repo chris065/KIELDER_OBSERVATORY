@@ -2,7 +2,7 @@
 # coding=utf8
 import urllib3, certifi, requests
 import datetime
-import csv
+import csv, json
 from bs4 import BeautifulSoup
 from PIL import Image
 from io import BytesIO
@@ -32,7 +32,8 @@ print(links[0])
 with open('output.csv', newline='', encoding='utf-8') as f:
     reader = csv.reader(f)
     line = 0
-    passlist = []
+    passlist = {}
+    passlist['passes'] = []
     for isspass in reader:
         if (line <= 1): # Skip first two lines of header data
             line += 1
@@ -89,13 +90,17 @@ with open('output.csv', newline='', encoding='utf-8') as f:
             desc = desc + "towards " + entry[4] + " and "
 
             if int(entry[9]) < 20:
-                desc = desc + "sets "
+                print(str(dur)[2:4])
+                if str(dur)[2:4] == '00': # Pass is < 1 minute
+                    desc = desc + "disappears quickly "
+                else:
+                    desc = desc + "sets "
             else:
                 desc = desc + "disappears mid-pass "
 
             desc = desc + "after " + str(dur)[3:] + "."
 
-            passlist.append(desc)
+
 
             # Download and Save Image pertaining to pass
             link = links[line-2].find("a").get('href')
@@ -112,4 +117,23 @@ with open('output.csv', newline='', encoding='utf-8') as f:
             print(entry[2].strftime("%d %b - %H:%M:%S  --  "), desc)
             #print(entry)
 
+            passlist['passes'].append({
+            'date': str(entry[0]),
+            'mag': entry[1],
+            'tStart': str(entry[2]),
+            'aStart': entry[3],
+            'dStart': entry[4],
+            'tMid': str(entry[5]),
+            'aMid': entry[6],
+            'dMid': entry[7],
+            'tEnd': str(entry[8]),
+            'aEnd': entry[9],
+            'dEnd': entry[10],
+            'desc': desc,
+            'map': fileName
+            })
+
             line += 1
+
+with open('ISSPasses.json', "w") as o:
+    json.dump(passlist, o)
