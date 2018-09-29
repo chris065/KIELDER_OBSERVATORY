@@ -65,6 +65,17 @@ def getTimeDiff():
 
     return diff
 
+tableData = ""
+
+#get the events json file
+with open("events.json", "r") as read_file:
+    events = json.load(read_file)
+    for x, line in enumerate(events["allEv"]):
+        if(str(events["allEv"][x]["places"]) == "0"):
+            tableData = tableData + "<tr style='color: #707070'><td>"+str(events["allEv"][x]["date"])+", "+str(events["allEv"][x]["time"])+"</td><td>"+str(events["allEv"][x]["title"])+"</td><td>"+str(events["allEv"][x]["places"])+"</td></tr>"
+        else:
+            tableData = tableData + "<tr><td>"+str(events["allEv"][x]["date"])+", "+str(events["allEv"][x]["time"])+"</td><td>"+str(events["allEv"][x]["title"])+"</td><td>"+str(events["allEv"][x]["places"])+"</td></tr>"
+    #print(tableData)
 
 # Key definition for moonrise/set table
 def takeSecond(elem):
@@ -397,49 +408,7 @@ htmlFile.write(
             <th style="border-right: white solid 5px">Event Name</th>
             <th>Spaces</th>
           </tr>
-          <tr>
-            <td>Date</td>
-            <td>Event Name</td>
-            <td>Spaces</td>
-          </tr>
-          <tr>
-            <td>Date</td>
-            <td>Event Name</td>
-            <td>Spaces</td>
-          </tr>
-          <tr>
-            <td>Date</td>
-            <td>Event Name</td>
-            <td>Spaces</td>
-          </tr>
-          <tr>
-            <td>Date</td>
-            <td>Event Name</td>
-            <td>Spaces</td>
-          </tr>
-          <tr>
-            <td>Date</td>
-            <td>Event Name</td>
-            <td>Spaces</td>
-            <tr>
-              <td>Date</td>
-              <td>Event Name</td>
-              <td>Spaces</td>
-            </tr>
-            <tr>
-              <td>Date</td>
-              <td>Event Name</td>
-              <td>Spaces</td>
-              <tr>
-                <td>Date</td>
-                <td>Event Name</td>
-                <td>Spaces</td>
-              </tr>
-              <tr>
-                <td>Date</td>
-                <td>Event Name</td>
-                <td>Spaces</td>
-              </tr>
+          '''+str(tableData)+'''
         </table>
 
       </div>
