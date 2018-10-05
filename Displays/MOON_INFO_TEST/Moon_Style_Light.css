@@ -6,7 +6,7 @@ b {
 	color: #FFFFFF;
 	font-size: 60px;
 	font-weight: bold;
-	font-family: Calibri;
+	font-family: Roboto;
 	position: absolute;
 	left: 40px;
 	top: 40px;
@@ -41,7 +41,7 @@ th {
 	font-size: 40px;
 	text-align: center;
 	font-weight: bold;
-	font-family: Calibri;
+	font-family: Roboto;
 	border: 1px solid #FFFFFF;
 	border-collapse: collapse;
 }
@@ -52,7 +52,7 @@ td#td01 {
 	background-color: #777777;
 	font-size: 40px;
 	text-align: left;
-	font-family: Calibri;
+	font-family: Roboto;
 	border: 1px solid #FFFFFF;
 	border-collapse: collapse;
 }
@@ -63,7 +63,7 @@ td#td02 {
 	background-color: #FFFFFF;
 	font-size: 40px;
 	text-align: left;
-	font-family: Calibri;
+	font-family: Roboto;
 	border: 1px solid #777777;
 	border-collapse: collapse;
 }
@@ -74,7 +74,7 @@ td#td03 {
 	background-color: #FFFFFF;
 	font-size: 40px;
 	text-align: center;
-	font-family: Calibri;
+	font-family: Roboto;
 	border: 1px solid #777777;
 	border-collapse: collapse;
 }
@@ -90,7 +90,7 @@ div.key {
 	text-align: center;
 	font-size: 40px;
 	font-weight: bold;
-	font-family: Calibri;
+	font-family: Roboto;
 	padding: 10px;
 }
 
@@ -102,5 +102,5 @@ div.credits {
 	text-align: center;
 	font-size: 20px;
 	font-weight: bold;
-	font-family: Calibri;
+	font-family: Roboto;
 }

@@ -148,7 +148,7 @@ os.remove("ISS_View_Credits_Mask.png")
 #############################################
 
 # Open text HTML file (as an overwrite rather than append):
-f = open('ISS.html', 'w+')
+f = open('../Disp.html', 'w+')
 
 # Write HTML href text to first line of new text HTML file:
 issHtml = '''<!DOCTYPE html>
@@ -157,6 +157,7 @@ issHtml = '''<!DOCTYPE html>
 The International Space Station Now
 </title>
 <head>
+<link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
 <style>
 '''+styleSheet+'''
 </style>
@@ -168,7 +169,7 @@ The International Space Station Now
     setTimeout(function()
     {
       location.reload();
-    }, 6*60000);//refresh every 6 minutes. The exta minute is for delay
+    }, 3*60000);//refresh every 6 minutes. The exta minute is for delay
   </script>
 
 <div>
@@ -177,24 +178,24 @@ The International Space Station Now
 </div>
 
 <div class = "issGround">
-	<img src = "IMG/ISS_Ground.png">
+	<img src = "ISS_INFO_TEST/IMG/ISS_Ground.png">
 	<div class = "key">Ground Track</div>
 </div>
 
 <div class="issOrbit">
-    <img src = "IMG/ISS_Orbit.png">
+    <img src = ""ISS_INFO_TEST/IMG/ISS_Orbit.png">
   <div class = "key">Orbital View</div>
 </div>
 
 <div class = "issView">
-	<img src = "IMG/ISS_View.png">
+	<img src = ""ISS_INFO_TEST/IMG/ISS_View.png">
 	<div class = "key">ISS View</div>
 </div>
 
 <div class = "credits">Credit: www.heavens-above.com</div>
 
 <div class = "kielderLogo">
-	<img src = "IMG/Kielder_Logo.png">
+	<img src = ""ISS_INFO_TEST/IMG/Kielder_Logo.png">
 </div>
 
 </body>

@@ -118,7 +118,8 @@ moonPhase = str(moonPhase)
 moonRange = m.earth_distance
 moonRange = moonRange * 92955807.3
 moonRange = round(moonRange)
-moonRange = str(moonRange)
+moonRange = "{:,}".format(moonRange)
+print(moonRange)
 
 
 #############################################
@@ -223,7 +224,7 @@ else:
 #############################################
 
 # Open text HTML file (as an overwrite rather than append):
-f = open("Moon.html", 'w+')
+f = open("../Disp.html", 'w+')
 
 # Write HTML href text to first line of new text HTML file:
 moonHtml = '''<!DOCTYPE html>
@@ -232,6 +233,7 @@ moonHtml = '''<!DOCTYPE html>
 The Moon Now
 </title>
 <head>
+<link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
 <style>
 '''+styleSheet+'''
 </style>
@@ -243,7 +245,7 @@ The Moon Now
         setTimeout(function()
         {
             location.reload();
-        }, 6*60000);
+        }, 3*60000);
     </script>
 
 <div>
@@ -252,7 +254,7 @@ The Moon Now
 </div>
 
 <div class = "moonPos">
-	<img src = "Moon_Position.png">
+	<img src = "MOON_INFO_TEST/Moon_Position.png">
 	<div class = "key">Current Moon Position on Sky</div>
 </div>
 
@@ -271,8 +273,8 @@ The Moon Now
 		<td id="td02"><i>''' + moonConstellation + '''</i></td>
 	</tr>
 	<tr>
-		<td id="td01">Illumination (%)</td>
-		<td id="td01"><i>''' + moonPhase + '''%</i></td>
+		<td id="td01">Illumination</td>
+		<td id="td01"><i>''' + moonPhase + ''' % (''' + moonStatus  +  ''')</i></td>
 	</tr>
 	<tr>
 		<td id="td02">''' + moonList[0] + '''</td>
@@ -284,11 +286,11 @@ The Moon Now
 	</tr>
 	<tr>
 		<td id="td02" rowspan = 5>Phase</td>
-		<td id="td03"rowspan = 5 align = "center" style = "background-color:#000000;"><img style = "width:60%;" src = frames/''' + phase + '''></td>	</tr>
+		<td id="td03"rowspan = 5 align = "center" style = "background-color:#000000;"><img style = "width:60%;" src = MOON_INFO_TEST/frames/''' + phase + '''></td>	</tr>
 </table>
 
 <div class = "kielderLogo">
-	<img src = "IMG/Kielder_Logo.png">
+	<img src = "MOON_INFO_TEST/IMG/Kielder_Logo.png">
 </div>
 
 </body>

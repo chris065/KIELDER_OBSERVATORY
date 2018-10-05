@@ -141,7 +141,7 @@ for i in [kNow, kMax]:
 #############################################
 
 # Open text HTML file (as an overwrite rather than append):
-f = open("Aurora.html", 'w+')
+f = open("../Disp.html", 'w+')
 
 # Write HTML href text to first line of new text HTML file:
 auroraHtml = '''<!DOCTYPE html>
@@ -150,6 +150,7 @@ auroraHtml = '''<!DOCTYPE html>
 The Aurora Now
 </title>
 <head>
+<link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
 <style>
 '''+styleSheet+'''
 </style>
@@ -161,7 +162,7 @@ The Aurora Now
     setTimeout(function()
     {
         location.reload();
-    }, 6*60000);
+    }, 3*60000);
 </script>
 
 <div>
@@ -170,7 +171,7 @@ The Aurora Now
 </div>
 
 <div class = "auroralOval">
-	<img src = "IMG/Aurora_Map.png">
+	<img src = "AURORA_INFO_TEST/IMG/Aurora_Map.png">
 	<div class = "key">Current Auroral Oval</div>
 </div>
 
@@ -181,7 +182,7 @@ The Aurora Now
 		<th colspan = 2>Solar Wind and Magnetic Field<br></th>
 	</tr>
 	<tr>
-		<td id="td01">Solar Wind Speed (kph)</td>
+		<td id="td01">Solar Wind Speed (km/s)</td>
 		<td id="td01"><i>''' + solarWindSpeed + '''</i></td>
 	</tr>
 	<tr>
@@ -211,7 +212,7 @@ The Aurora Now
 </table>
 
 <div class = "kielderLogo">
-	<img src = "IMG/Kielder_Logo.png">
+	<img src = "AURORA_INFO_TEST/IMG/Kielder_Logo.png">
 </div>
 
 </body>

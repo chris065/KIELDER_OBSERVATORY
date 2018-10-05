@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 
 #############################################
@@ -72,7 +72,9 @@ mjdPlus = julian.to_jd(timePlusHour, fmt='mjd')
 
 gb = pytz.timezone('Europe/London')
 
+currentTime = currentTime.replace(tzinfo=pytz.utc)
 currentTime = currentTime.astimezone(tz=gb).strftime("%H:%M (%Z)")
+timePlusHour = timePlusHour.replace(tzinfo=pytz.utc)
 timePlusHour = timePlusHour.astimezone(tz=gb).strftime("%H:%M (%Z)")
 
 #############################################
@@ -289,7 +291,7 @@ else:
 #############################################
 
 # Open text HTML file (as an overwrite rather than append):
-f = open('Night_Sky.html', 'w+')
+f = open('../Disp.html', 'w+')
 
 # Write HTML href text to first line of new text HTML file:
 nightSkyHtml = '''<!DOCTYPE html>
@@ -298,6 +300,7 @@ nightSkyHtml = '''<!DOCTYPE html>
 The Kielder Night Sky Now
 </title>
 <head>
+<link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
 <style>
 '''+styleSheet+'''
 </style>
@@ -309,7 +312,7 @@ The Kielder Night Sky Now
     setTimeout(function()
     {
         location.reload();
-    }, 6*60000);
+    }, 3*60000);
 </script>
 
 <div>
@@ -332,12 +335,12 @@ The Kielder Night Sky Now
 </div>
 
 <div class = "nightSkyNow">
-	<img src = "IMG/Night_Sky_Now.png">
+	<img src = "NIGHT_SKY_INFO_TEST/IMG/Night_Sky_Now.png">
 	<div class = "key">Night Sky (''' + currentTime + ''')</div>
 </div>
 
 <div class="nightSkyNext">
-	<img src = "IMG/Night_Sky_Next.png">
+	<img src = "NIGHT_SKY_INFO_TEST/IMG/Night_Sky_Next.png">
 	<div class = "key">Night Sky + 2 Hours (''' + timePlusHour + ''')</div>
 </div>
 
@@ -353,31 +356,31 @@ The Kielder Night Sky Now
 		<td id="td01">Solar Noon</td>
 	</tr>
 	<tr>
-		<td id="td02"><i>''' + str(solarNoon) + ''' (GMT)</i></td>
+		<td id="td02"><i>''' + solarNoon.strftime("%H:%M:%S %Z") + '''</i></td>
 	</tr>
 	<tr>
 		<td id="td01">Sunset</td>
 	</tr>
 	<tr>
-		<td id="td02"><i>''' + str(sunSet) + ''' (GMT)</i></td>
+		<td id="td02"><i>''' + sunSet.strftime("%H:%M:%S %Z") + '''</i></td>
 	</tr>
 	<tr>
 		<td id="td01">Civil Twilight</td>
 	</tr>
 	<tr>
-		<td id="td02"><i>''' + str(endCivilTwilight) + ''' (GMT)</i></td>
+		<td id="td02"><i>''' + endCivilTwilight.strftime("%H:%M:%S %Z") + '''</i></td>
 	</tr>
 	<tr>
 		<td id="td01">Nautical Twilight</td>
 	</tr>
 	<tr>
-		<td id="td02"><i>''' + str(endNauticalTwilight) + ''' (GMT)</i></td>
+		<td id="td02"><i>''' + endNauticalTwilight.strftime("%H:%M:%S %Z") + '''</i></td>
 	</tr>
 	<tr>
 		<td id="td01">Astronomy Twilight</td>
 	</tr>
 	<tr>
-		<td id="td02"><i>''' + str(endAstronomicalTwilight) + '''</i></td>
+		<td id="td02"><i>''' + endAstronomicalTwilight.strftime("%H:%M:%S %Z") + '''</i></td>
 	</tr>
 	<tr>
 		<td id="td01">Zodiac Constellation</td>
@@ -388,7 +391,7 @@ The Kielder Night Sky Now
 </table>
 
 <div class = "kielderLogo">
-	<img src = "IMG/Kielder_Logo.png">
+	<img src = ""NIGHT_SKY_INFO_TEST/IMG/Kielder_Logo.png">
 </div>
 
 </body>

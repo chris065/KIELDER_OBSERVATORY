@@ -20,9 +20,10 @@ from io import BytesIO
 # Manipulating strings:
 import string
 
+apodDay = datetime.datetime.now()
+if apodDay.hour < 9:
+    apodDay = apodDay + datetime.timedelta(days=-1)
 
-darkStyleSheet = ""
-lightStyleSheet = ""
 styleSheet = ""
 
 kobs = e.Observer()
@@ -53,7 +54,7 @@ with open("title.txt", "r") as ti:
 with open("credit.txt", "r") as cr:
     apodCredit = cr.read()
 
-with open("frame.txt", "w") as fr:
+with open("frame.txt", "r") as fr:
     frame = fr.read()
 
 #############################################
@@ -61,7 +62,7 @@ with open("frame.txt", "w") as fr:
 #############################################
 
 # Open text HTML file (as an overwrite rather than append):
-f = open('../Screen1.html', 'w+')
+f = open('../Disp.html', 'w+')
 
 # Write HTML href text to first line of new text HTML file:
 apodHtml = '''<!DOCTYPE html>
@@ -70,12 +71,21 @@ apodHtml = '''<!DOCTYPE html>
 NASA Astronomy Picture of the Day
 </title>
 <head>
+<link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
 <style>
 '''+styleSheet+'''
 </style>
 </head>
 
 <body>
+
+<script>
+    setTimeout(function()
+    {
+        location.reload();
+    }, 3*60000);
+</script>
+
 <div>
 <b> NASA Astronomy Picture of the Day - '''+apodDay.strftime("%d/%m/%Y")+'''
 

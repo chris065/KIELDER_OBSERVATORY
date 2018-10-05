@@ -26,6 +26,7 @@ from io import BytesIO
 
 # Setting environment variables and/or deleting files:
 from subprocess import run
+from os import environ
 
 styleSheet = ""
 
@@ -57,6 +58,8 @@ else:
 # Uses a Python NASA API (see brendanv github repository)
 # Note that API was installed with pip installer, but API
 # code was changed to reflect different NASA API website
+
+environ['NASA_API_KEY'] = "VSeA2cMgNPtUslwyxj1cSGztgo8ZLJhUkGyA2IZ1"
 
 apodDay = datetime.datetime.now()
 
@@ -99,17 +102,23 @@ else: # APOD is image, fetch
     #print(Image.format(apodImage))
     apodImage.save("NASA_APOD.jpg")
 
+credit = ''
+
+try:
+    credit = aPod['copyright']
+except:
+    credit = ''
+
 
 # Save Data for Future Use
 with open("explanation.txt", "w+") as ex:
     ex.write(aPod['explanation'])
 
 with open("title.txt", "w+") as ti:
-    ti.write(apodTitle)
+    ti.write(aPod['title'])
 
 with open("credit.txt", "w+") as cr:
-    cr.write(aPod['copyright'])
-
+    cr.write(credit)
 #############################################
 # Write data to HTML file:
 #############################################
@@ -119,11 +128,11 @@ f = open('../Screen1.html', 'w+')
 
 # Decide how to embed content
 if yturl != "":
-    frame = '''<video src="APOD_INFO_TEST/APODVideo.mp4" height="650" preload autoplay loop> </video>'''
+    frame = '''<video src="zAPOD_INFO_TEST/APODVideo.mp4" height="650" preload autoplay loop> </video>'''
 elif iframe != "":
     frame = iframe
 else:
-    frame = '''<img style = "max-height: 650px; max-width: 1840px;" src = "APOD_INFO_TEST/NASA_APOD.jpg">'''
+    frame = '''<img style = "max-height: 650px; max-width: 1840px;" src = "zAPOD_INFO_TEST/NASA_APOD.jpg">'''
 
 with open("frame.txt", "w") as fr:
     fr.write(frame)
@@ -154,7 +163,7 @@ NASA Astronomy Picture of the Day
 	<div class = "caption">''' + aPod['explanation'] + '''</div>
 </div>
 
-<div class = "credits">Image Credit: ''' + aPod['copyright'] + '''</div>
+<div class = "credits">Image Credit: ''' + credit + '''</div>
 
 </body>
 </html>'''
