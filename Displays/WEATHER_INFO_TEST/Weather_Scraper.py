@@ -13,20 +13,20 @@
 
 # Current system times:
 from datetime import datetime
+import ephem as e
 
 # Parsing information and images from HTML websites:
-import urllib
+import urllib3, certifi
 import requests
-import json, requests
-import ephem as e
+import json
 
 # Manipulating (crop, resize, save etc.) images:
 from PIL import Image
-
-# Manipulating strings:
-import string
+from io import BytesIO
 
 # Getting weather data:
+http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED',ca_certs=certifi.where())
+
 weatherUrl = "http://datapoint.metoffice.gov.uk/public/data/val/wxfcs/all/json/352090?res=3hourly&key=c5e68363-c162-4e94-8661-bc92d217577a"
 getWeather = requests.get(weatherUrl)
 weather = json.loads(getWeather.text)
@@ -34,8 +34,6 @@ weather = json.loads(getWeather.text)
 
 #Setting the style sheet depending on the time of the day
 styleSheet = ""
-darkStyleSheet = ""
-lightStyleSheet = ""
 
 obsLat = '55.232302'
 obsLon = '-2.616033'
@@ -49,12 +47,10 @@ sun.compute(obs)
 
 alt = int(str(sun.alt).split(':')[0])
 
-if alt < -6:
-	darkStyleSheet = open("displayStyleDark.css", "r").read()
-	styleSheet = darkStyleSheet
+if alt <= -6:
+	styleSheet = open("displayStyleDark.css", "r").read()
 else:
-	lightStyleSheet = open("displayStyleLight.css", "r").read()
-	styleSheet = lightStyleSheet
+	syleSheet = open("displayStyleLight.css", "r").read()
 
 
 
@@ -69,8 +65,8 @@ else:
 satUrl = "http://api.sat24.com/crop?type=infraPolair&lat=55.233&lon=-2.5881&width=800&height=800&zoom=0.60&continent=eu"
 
 # Get satellite weather image:
-satWeatherImage = urllib.request.urlretrieve(satUrl, "Sat_Weather.png")
-satWeatherImage = Image.open("Sat_Weather.png")
+i = http.request('GET', satUrl)
+satWeatherImage = Image.open(BytesIO(i.data))
 
 # Crop satellite image from 800 x 800 to remove ugly timestamps:
 left = 60
@@ -98,20 +94,13 @@ weatherHumidity = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['
 weatherHumidity = str(weatherHumidity) + "%"
 
 weatherWindSpeed = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['S'])
-weatherWindSpeed = str(weatherWindSpeed) + "mph"
+weatherWindSpeed = str(weatherWindSpeed) + " mph"
 
 weatherWindDirection = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['D'])
 weatherWindDirection = str(weatherWindDirection)
 
 weatherPrecip = (weather['SiteRep']['DV']['Location']['Period'][0]['Rep'][0]['Pp'])
 weatherPrecip = str(weatherPrecip) + "%"
-
-weatherPressure = ""
-
-
-
-
-
 
 
 
@@ -120,7 +109,7 @@ weatherPressure = ""
 #############################################
 
 # Open text HTML file (as an overwrite rather than append):
-f = open('Weather.html', 'w+')
+f = open('../Disp.html', 'w+')
 
 # Write HTML href text to first line of new text HTML file:
 weatherHtml = '''<!DOCTYPE html>
@@ -129,7 +118,7 @@ weatherHtml = '''<!DOCTYPE html>
 The Kielder Weather Now
 </title>
 <head>
-
+<link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
 <style>
 '''+styleSheet+'''
 </style>

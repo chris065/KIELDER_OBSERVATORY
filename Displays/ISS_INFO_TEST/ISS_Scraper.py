@@ -75,7 +75,7 @@ if dayOfYear in spring:
   season = 'Autumn'
 elif dayOfYear in summer:
   season = 'Winter'
-elif doy in autumn:
+elif dayOfYear in autumn:
   season = 'Spring'
 else:
   season = 'Summer'
@@ -183,19 +183,19 @@ The International Space Station Now
 </div>
 
 <div class="issOrbit">
-    <img src = ""ISS_INFO_TEST/IMG/ISS_Orbit.png">
+    <img src = "ISS_INFO_TEST/IMG/ISS_Orbit.png">
   <div class = "key">Orbital View</div>
 </div>
 
 <div class = "issView">
-	<img src = ""ISS_INFO_TEST/IMG/ISS_View.png">
+	<img src = "ISS_INFO_TEST/IMG/ISS_View.png">
 	<div class = "key">ISS View</div>
 </div>
 
 <div class = "credits">Credit: www.heavens-above.com</div>
 
 <div class = "kielderLogo">
-	<img src = ""ISS_INFO_TEST/IMG/Kielder_Logo.png">
+	<img src = "ISS_INFO_TEST/IMG/Kielder_Logo.png">
 </div>
 
 </body>
@@ -204,3 +204,77 @@ f.write(issHtml)
 
 # Close text file:
 f.close()
+
+'''
+
+div.passTable {
+	position: absolute;
+	top: 140px;
+	left: 380px;
+	width: 1400px;
+}
+
+table.visPasses {
+	width: 1400px;
+	height: 800px;
+}
+
+th {
+	text-align: center;
+	font-weight: bold;
+	color: #FFFFFF;
+	background-color: #78BE20;
+	font-family: Roboto;
+	font-size: 30px;
+	padding: 10px;
+}
+
+td {
+	color: #FFFFFF;
+	padding: 10px;
+	font-size: 30px;
+	text-align: center;
+	font-family: Roboto;
+	border: 1px solid #FFFFFF;
+	border-collapse: collapse;
+}
+
+tr:nth-child(even){
+	background-color: #AAAAAA;
+}
+
+tr.subHeader {
+	background-color: #78BE20;
+	color: #FFFFFF;
+	padding: 5px;
+}
+
+
+
+<div class="passTable">
+	<table class="visPasses">
+		<tr>
+			<th colspan="3" style="font-size: 40px;">Spot the Space Station tonight!</th>
+		</tr>
+		<tr class="subHeader">
+			<th>Start Time</th>
+			<th>How Bright?</th>
+			<th>More Details</th>
+		</tr>
+		<tr>
+			<td>20:23:50</td>
+			<td>-2.2</td>
+			<td style="text-align: left;"> Bright overhead pass. Rises in the SSW and disappears overhead after 4:03.</td>
+		</tr>
+		<tr>
+			<td>20:23:50</td>
+			<td>-2.2</td>
+			<td style="text-align: left;"> Bright overhead pass. Rises in the SSW and disappears overhead after 4:03.</td>
+		</tr>
+		<tr>
+			<td>20:23:50</td>
+			<td>-2.2</td>
+			<td style="text-align: left;"> Bright overhead pass. Rises in the SSW and disappears overhead after 4:03.</td>
+		</tr>
+	</table>
+</div>'''

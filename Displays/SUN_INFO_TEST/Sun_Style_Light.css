@@ -6,7 +6,7 @@ b {
 	color: #FFFFFF;
 	font-size: 60px;
 	font-weight: bold;
-	font-family: Calibri;
+	font-family: Roboto;
 	position: absolute;
 	left: 40px;
 	top: 40px;
@@ -42,7 +42,7 @@ div.key {
 	text-align: center;
 	font-size: 40px;
 	font-weight: bold;
-	font-family: Calibri;
+	font-family: Roboto;
 	padding: 10px;
 }
 
@@ -50,7 +50,7 @@ div.caption {
 	color: #FFFFFF;
 	text-align: center;
 	font-size: 40px;
-	font-family: Calibri;
+	font-family: Roboto;
 }
 
 div.credits {
@@ -61,5 +61,5 @@ div.credits {
 	text-align: center;
 	font-size: 20px;
 	font-weight: bold;
-	font-family: Calibri;
+	font-family: Roboto;
 }
