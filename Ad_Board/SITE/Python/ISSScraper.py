@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 from PIL import Image
 from io import BytesIO
 from html_table_extractor.extractor import Extractor
+from subprocess import call
 
 today = datetime.date.today()
 
@@ -137,3 +138,5 @@ with open('output.csv', newline='', encoding='utf-8') as f:
 
 with open('ISSPasses.json', "w") as o:
     json.dump(passlist, o)
+
+call(["python", "writeISSPasses.py"])

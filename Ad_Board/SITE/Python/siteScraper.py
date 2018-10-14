@@ -12,6 +12,7 @@ import json, requests
 import urllib
 from PIL import Image
 import time
+from subprocess  import call
 
 currentWeatherPeriod = 0
 phaseName = ""
@@ -260,6 +261,8 @@ issGroundImg.paste(issCreditMaskGround, issCreditMarkGround)
 issGroundImg.save("../IMG/issGround.png")
 #end of mask code for ground view
 
+call(["python", "ISSScraper.py"])
+issTableData = open("ISSPassesTable.txt", "r").read()
 
 htmlFile = open("../Display_V2.html", "w+")
 
@@ -373,7 +376,15 @@ htmlFile.write(
         <img id="issAbove" src="IMG/issAbove.png">
 
         <div class="issInfo">
-          <p>ISS Passes / Crew Info</p>
+            <table>
+                <tr>
+                    <th>Start Time</th>
+                    <th>Magnitude</th>
+                    <th>Start Direction</th>
+                    <th>Description</th>
+                </tr>
+                '''+str(issTableData)+'''
+            </table>
         </div>
       </div>
     </div>
