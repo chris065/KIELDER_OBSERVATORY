@@ -275,6 +275,12 @@ htmlFile.write(
   </head>
 
   <body>
+    <script>
+        setTimeout(function()
+        {
+            location.reload();
+        }, 5 * 60000); // refresh every 5 minutes
+    </script>
 
       <div class="blockOne">
 
