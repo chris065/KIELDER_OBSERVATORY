@@ -48,21 +48,18 @@ def getTimeDiff():
     moon_ts = time.mktime(moonset.timetuple())
     sun_ts = time.mktime(sunset.timetuple())
 
-    diff = int(sun_ts - moon_ts) / 60
+    diff = (int(moon_ts - sun_ts) / 60)
 
-    if diff > 60 or diff < -60:
-        if diff < -60:
-            diff = abs(diff)
+    if diff >= 60:
         diff = float(diff) / 60
         diff = round(diff, 1)
-        diff = str(diff) + " hours"
+        diff = str(diff) + " hours after the sun"
     else:
-        if diff < 0:
-            diff = abs(diff)
+        diff = float(diff) / 60
         diff = round(diff, 1)
-        diff = str(diff) + " minutes"
+        diff = str(diff) + " minutes after the sun"
 
-    #print(diff)
+    print(diff)
 
     return diff
 
@@ -91,7 +88,7 @@ if (today.year == tomorrow.year):
         datestr = today.strftime("%d") + " - " + tomorrow.strftime("%d") + " " + today.strftime("%B %Y")
     else:
         datestr = today.strftime("%d %b") + " - " + tomorrow.strftime("%d %b") + " " + today.strftime("%Y")
-else: # Date is 31/12
+else:
     datestr = today.strftime("%d %b %y") + " - " + tomorrow.strftime("%d %b %y")
 #print (datestr)
 
@@ -261,7 +258,7 @@ issGroundImg.paste(issCreditMaskGround, issCreditMarkGround)
 issGroundImg.save("../IMG/issGround.png")
 #end of mask code for ground view
 
-call(["python", "ISSScraper.py"])
+#call(["python", "ISSScraper.py"])
 issTableData = open("ISSPassesTable.txt", "r").read()
 
 htmlFile = open("../Display_V2.html", "w+")
@@ -371,7 +368,7 @@ htmlFile.write(
 
           <p class="moonData"><b>'''+str(moonPhase)+'''%<b/> / <b>'''+getMoonPhaseName(float(moonPhase))+'''<b/>
             <br/><br/><br/>
-            The Moon sets <b>'''+str(getTimeDiff())+'''<b/> after the sun
+            The Moon sets <b>'''+str(getTimeDiff())+'''</b>
             <br/><br/><br/>
             Distance from the moon: <b>'''+str(earthToMoon)+''' Km</b>
           </p>
